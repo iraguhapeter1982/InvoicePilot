@@ -10,227 +10,179 @@ export class ModernTemplate extends BaseTemplate {
     const secondaryRgb = this.hexToRgb(config.colors.secondary);
     const accentRgb = this.hexToRgb(config.colors.accent);
 
-    // MODERN HEADER BAND - Full width with sophisticated gradient
+    // MODERN HEADER BAND - Clean and simple
     doc.setFillColor(...primaryRgb);
-    doc.rect(0, 0, 210, 45, 'F');
-    
-    // Subtle gradient effect with secondary color
-    doc.setFillColor(...secondaryRgb);
-    doc.rect(0, 35, 210, 10, 'F');
+    doc.rect(0, 0, 210, 30, 'F');
 
-    // INVOICE TITLE - Large, bold, modern typography
+    // INVOICE TITLE in header
     doc.setTextColor(255, 255, 255);
-    doc.setFontSize(32);
+    doc.setFontSize(24);
     doc.setFont('helvetica', 'bold');
-    doc.text('INVOICE', 25, 30);
+    doc.text('INVOICE', 20, 22);
 
-    // ELEVATED INVOICE DETAILS CARD - Positioned below header
-    doc.setFillColor(255, 255, 255);
-    doc.roundedRect(130, 55, 70, 55, 8, 8, 'F');
+    // COMPANY SECTION - Starting below header with safe spacing
+    let yPos = 50;
     
-    // Card shadow effect
-    doc.setFillColor(0, 0, 0, 0.1);
-    doc.roundedRect(132, 57, 70, 55, 8, 8, 'F');
-    doc.setFillColor(255, 255, 255);
-    doc.roundedRect(130, 55, 70, 55, 8, 8, 'F');
+    // Logo positioned safely
+    this.addLogo(doc, config, 20, yPos, 50, 25);
     
-    // Card border
-    doc.setDrawColor(235, 235, 235);
-    doc.setLineWidth(1);
-    doc.roundedRect(130, 55, 70, 55, 8, 8, 'S');
-    
-    // Invoice details with professional typography hierarchy
-    doc.setTextColor(...primaryRgb);
-    doc.setFontSize(10);
-    doc.setFont('helvetica', 'bold');
-    doc.text('INVOICE DETAILS', 135, 67);
-    
+    // Company information 
     doc.setTextColor(0, 0, 0);
     doc.setFontSize(16);
     doc.setFont('helvetica', 'bold');
-    doc.text(`#${invoice.invoiceNumber}`, 135, 80);
-    
-    doc.setFontSize(9);
-    doc.setFont('helvetica', 'normal');
-    doc.setTextColor(100, 100, 100);
-    doc.text('Issue Date:', 135, 90);
-    doc.setTextColor(0, 0, 0);
-    doc.setFont('helvetica', 'bold');
-    doc.text(new Date(invoice.issueDate).toLocaleDateString(), 135, 98);
-    
-    doc.setFont('helvetica', 'normal');
-    doc.setTextColor(100, 100, 100);
-    doc.text('Due Date:', 135, 106);
-    doc.setTextColor(...accentRgb);
-    doc.setFont('helvetica', 'bold');
-    doc.text(new Date(invoice.dueDate).toLocaleDateString(), 135, 114);
-
-    // COMPANY SECTION - Professional layout below header
-    let yPos = 55;
-    
-    // Logo positioned properly below header
-    this.addLogo(doc, config, 25, yPos, 60, 30);
-    
-    // Company information with enhanced typography
-    doc.setTextColor(0, 0, 0);
-    doc.setFontSize(18);
-    doc.setFont('helvetica', 'bold');
     const companyName = user.businessName || `${user.firstName || ''} ${user.lastName || ''}`;
-    doc.text(companyName, 25, yPos + 40);
+    doc.text(companyName, 20, yPos + 35);
     
-    // Company details with clean spacing
-    yPos += 50;
-    doc.setFontSize(10);
+    // Company details
+    yPos += 45;
+    doc.setFontSize(9);
     doc.setFont('helvetica', 'normal');
     doc.setTextColor(80, 80, 80);
     
     if (user.businessAddress) {
       const addressLines = this.splitAddress(user.businessAddress);
       addressLines.forEach((line, index) => {
-        doc.text(line, 25, yPos + (index * 5));
+        doc.text(line, 20, yPos + (index * 4));
       });
-      yPos += addressLines.length * 5 + 8;
+      yPos += addressLines.length * 4 + 6;
     }
     
     if (user.email) {
-      doc.text(`Email: ${user.email}`, 25, yPos);
-      yPos += 6;
+      doc.text(user.email, 20, yPos);
+      yPos += 5;
     }
     if (user.businessPhone) {
-      doc.text(`Phone: ${user.businessPhone}`, 25, yPos);
-      yPos += 6;
+      doc.text(user.businessPhone, 20, yPos);
+      yPos += 5;
     }
     if (user.taxId) {
       doc.setTextColor(120, 120, 120);
-      doc.text(`Tax ID: ${user.taxId}`, 25, yPos);
+      doc.text(`Tax ID: ${user.taxId}`, 20, yPos);
     }
 
-    // BILL TO CARD - Modern elevated design
-    yPos = 125;
-    doc.setFillColor(248, 250, 252);
-    doc.roundedRect(120, yPos, 85, 50, 8, 8, 'F');
+    // INVOICE DETAILS CARD - Positioned safely on the right
+    doc.setFillColor(245, 245, 245);
+    doc.roundedRect(130, 50, 65, 45, 4, 4, 'F');
+    doc.setDrawColor(200, 200, 200);
+    doc.setLineWidth(0.5);
+    doc.roundedRect(130, 50, 65, 45, 4, 4, 'S');
     
-    // Card shadow
-    doc.setFillColor(0, 0, 0, 0.05);
-    doc.roundedRect(122, yPos + 2, 85, 50, 8, 8, 'F');
-    doc.setFillColor(248, 250, 252);
-    doc.roundedRect(120, yPos, 85, 50, 8, 8, 'F');
-    
-    // Card border
-    doc.setDrawColor(220, 225, 230);
-    doc.setLineWidth(1);
-    doc.roundedRect(120, yPos, 85, 50, 8, 8, 'S');
-    
-    // Section header with accent
-    doc.setTextColor(...secondaryRgb);
-    doc.setFontSize(12);
+    doc.setTextColor(...primaryRgb);
+    doc.setFontSize(10);
     doc.setFont('helvetica', 'bold');
-    doc.text('BILL TO', 125, yPos + 12);
+    doc.text('INVOICE DETAILS', 135, 60);
     
-    // Accent line under header
-    doc.setDrawColor(...accentRgb);
-    doc.setLineWidth(2);
-    doc.line(125, yPos + 15, 155, yPos + 15);
-    
-    // Client information with proper hierarchy
     doc.setTextColor(0, 0, 0);
     doc.setFontSize(14);
     doc.setFont('helvetica', 'bold');
-    doc.text(invoice.client.name, 125, yPos + 25);
+    doc.text(`#${invoice.invoiceNumber}`, 135, 72);
     
-    doc.setFontSize(9);
+    doc.setFontSize(8);
+    doc.setFont('helvetica', 'normal');
+    doc.setTextColor(100, 100, 100);
+    doc.text('Issue Date:', 135, 80);
+    doc.setTextColor(0, 0, 0);
+    doc.text(new Date(invoice.issueDate).toLocaleDateString(), 135, 86);
+    
+    doc.setTextColor(100, 100, 100);
+    doc.text('Due Date:', 135, 90);
+    doc.setTextColor(...accentRgb);
+    doc.setFont('helvetica', 'bold');
+    doc.text(new Date(invoice.dueDate).toLocaleDateString(), 135, 96);
+
+    // BILL TO SECTION - Clean positioning
+    yPos = 110;
+    doc.setFillColor(248, 248, 248);
+    doc.roundedRect(20, yPos, 75, 35, 4, 4, 'F');
+    doc.setDrawColor(220, 220, 220);
+    doc.setLineWidth(0.5);
+    doc.roundedRect(20, yPos, 75, 35, 4, 4, 'S');
+    
+    doc.setTextColor(...secondaryRgb);
+    doc.setFontSize(10);
+    doc.setFont('helvetica', 'bold');
+    doc.text('BILL TO', 25, yPos + 10);
+    
+    doc.setTextColor(0, 0, 0);
+    doc.setFontSize(12);
+    doc.setFont('helvetica', 'bold');
+    doc.text(invoice.client.name, 25, yPos + 20);
+    
+    doc.setFontSize(8);
     doc.setFont('helvetica', 'normal');
     doc.setTextColor(80, 80, 80);
-    let clientYPos = yPos + 33;
     
     if (invoice.client.address) {
-      const clientAddressLines = this.splitAddress(invoice.client.address);
-      clientAddressLines.slice(0, 2).forEach((line, index) => {
-        const truncatedLine = line.length > 30 ? line.substring(0, 30) + '...' : line;
-        doc.text(truncatedLine, 125, clientYPos + (index * 4));
-      });
-      clientYPos += 10;
+      const clientAddress = invoice.client.address.split('\n')[0];
+      const truncatedAddress = clientAddress.length > 25 ? clientAddress.substring(0, 25) + '...' : clientAddress;
+      doc.text(truncatedAddress, 25, yPos + 28);
     }
     
-    const emailText = invoice.client.email.length > 30 ? invoice.client.email.substring(0, 30) + '...' : invoice.client.email;
-    doc.text(emailText, 125, clientYPos);
+    const emailText = invoice.client.email.length > 25 ? invoice.client.email.substring(0, 25) + '...' : invoice.client.email;
+    doc.text(emailText, 25, yPos + 33);
 
-    // MODERN TABLE DESIGN - Professional with shadows
-    yPos = 185;
+    // TABLE SECTION - Simple and clean
+    yPos = 160;
     
-    // Table header with gradient effect
+    // Table header
     doc.setFillColor(...primaryRgb);
-    doc.roundedRect(25, yPos, 160, 15, 4, 4, 'F');
+    doc.rect(20, yPos, 170, 12, 'F');
     
-    // Header shadow
-    doc.setFillColor(0, 0, 0, 0.1);
-    doc.roundedRect(27, yPos + 2, 160, 15, 4, 4, 'F');
-    doc.setFillColor(...primaryRgb);
-    doc.roundedRect(25, yPos, 160, 15, 4, 4, 'F');
-    
-    // Table headers with perfect typography
     doc.setTextColor(255, 255, 255);
-    doc.setFontSize(11);
+    doc.setFontSize(9);
     doc.setFont('helvetica', 'bold');
-    doc.text('DESCRIPTION', 30, yPos + 10);
-    doc.text('QTY', 115, yPos + 10, { align: 'center' });
-    doc.text('RATE', 135, yPos + 10, { align: 'center' });
-    doc.text('AMOUNT', 175, yPos + 10, { align: 'right' });
+    doc.text('DESCRIPTION', 25, yPos + 8);
+    doc.text('QTY', 115, yPos + 8, { align: 'center' });
+    doc.text('RATE', 135, yPos + 8, { align: 'center' });
+    doc.text('AMOUNT', 175, yPos + 8, { align: 'right' });
 
-    // Table items with modern styling
-    yPos += 18;
+    // Table items
+    yPos += 15;
     doc.setFont('helvetica', 'normal');
     
     invoice.items.forEach((item, index) => {
-      // Alternating row backgrounds with subtle styling
       if (index % 2 === 1) {
-        doc.setFillColor(248, 249, 250);
-        doc.roundedRect(25, yPos - 3, 160, 14, 2, 2, 'F');
+        doc.setFillColor(248, 248, 248);
+        doc.rect(20, yPos - 2, 170, 12, 'F');
       }
       
-      // Row border for clean separation
-      doc.setDrawColor(240, 240, 240);
-      doc.setLineWidth(0.5);
-      doc.line(25, yPos + 11, 185, yPos + 11);
-      
       doc.setTextColor(0, 0, 0);
-      doc.setFontSize(10);
-      const description = item.description.length > 40 ? item.description.substring(0, 40) + '...' : item.description;
-      doc.text(description, 30, yPos + 7);
-      doc.text(item.quantity, 115, yPos + 7, { align: 'center' });
-      doc.text(this.formatCurrency(item.rate), 135, yPos + 7, { align: 'center' });
+      doc.setFontSize(9);
+      const description = item.description.length > 35 ? item.description.substring(0, 35) + '...' : item.description;
+      doc.text(description, 25, yPos + 6);
+      doc.text(item.quantity, 115, yPos + 6, { align: 'center' });
+      doc.text(this.formatCurrency(item.rate), 135, yPos + 6, { align: 'center' });
       
-      // Emphasize amounts
       doc.setFont('helvetica', 'bold');
-      doc.text(this.formatCurrency(item.amount), 175, yPos + 7, { align: 'right' });
+      doc.text(this.formatCurrency(item.amount), 175, yPos + 6, { align: 'right' });
       doc.setFont('helvetica', 'normal');
       
-      yPos += 14;
+      yPos += 12;
     });
 
-    // MODERN TOTALS SECTION - Properly positioned
+    // TOTALS SECTION - Simple and visible
     yPos += 15;
-    const totalsX = 110;
-    const totalsWidth = 75;
+    const totalsX = 120;
     
-    // Subtotal with clean layout
     doc.setTextColor(80, 80, 80);
-    doc.setFontSize(11);
+    doc.setFontSize(10);
     doc.setFont('helvetica', 'normal');
-    doc.text('Subtotal:', totalsX + 8, yPos);
+    
+    // Subtotal
+    doc.text('Subtotal:', totalsX, yPos);
     doc.setFont('helvetica', 'bold');
     doc.setTextColor(0, 0, 0);
-    doc.text(this.formatCurrency(invoice.subtotal), totalsX + totalsWidth - 8, yPos, { align: 'right' });
+    doc.text(this.formatCurrency(invoice.subtotal), 185, yPos, { align: 'right' });
     yPos += 12;
     
     // Tax
     if (invoice.taxAmount && parseFloat(invoice.taxAmount) > 0) {
       doc.setFont('helvetica', 'normal');
       doc.setTextColor(80, 80, 80);
-      doc.text(`Tax (${invoice.taxRate ? parseFloat(invoice.taxRate).toFixed(1) : '0'}%):`, totalsX + 8, yPos);
+      doc.text(`Tax (${invoice.taxRate ? parseFloat(invoice.taxRate).toFixed(1) : '0'}%):`, totalsX, yPos);
       doc.setFont('helvetica', 'bold');
       doc.setTextColor(0, 0, 0);
-      doc.text(this.formatCurrency(invoice.taxAmount), totalsX + totalsWidth - 8, yPos, { align: 'right' });
+      doc.text(this.formatCurrency(invoice.taxAmount), 185, yPos, { align: 'right' });
       yPos += 12;
     }
     
@@ -238,61 +190,47 @@ export class ModernTemplate extends BaseTemplate {
     if (invoice.discountAmount && parseFloat(invoice.discountAmount) > 0) {
       doc.setFont('helvetica', 'normal');
       doc.setTextColor(...accentRgb);
-      doc.text(`Discount (${invoice.discountRate ? parseFloat(invoice.discountRate).toFixed(1) : '0'}%):`, totalsX + 8, yPos);
+      doc.text(`Discount (${invoice.discountRate ? parseFloat(invoice.discountRate).toFixed(1) : '0'}%):`, totalsX, yPos);
       doc.setFont('helvetica', 'bold');
-      doc.text(`-${this.formatCurrency(invoice.discountAmount)}`, totalsX + totalsWidth - 8, yPos, { align: 'right' });
+      doc.text(`-${this.formatCurrency(invoice.discountAmount)}`, 185, yPos, { align: 'right' });
       yPos += 12;
     }
 
-    // TOTAL - Prominent styling with proper positioning
+    // TOTAL - Clear and prominent
     yPos += 5;
     doc.setFillColor(...accentRgb);
-    doc.roundedRect(totalsX, yPos, totalsWidth, 18, 6, 6, 'F');
+    doc.rect(totalsX, yPos - 3, 70, 16, 'F');
     
     doc.setTextColor(255, 255, 255);
-    doc.setFontSize(14);
+    doc.setFontSize(12);
     doc.setFont('helvetica', 'bold');
-    doc.text('TOTAL:', totalsX + 8, yPos + 12);
-    doc.setFontSize(16);
-    doc.text(this.formatCurrency(invoice.total), totalsX + totalsWidth - 8, yPos + 12, { align: 'right' });
+    doc.text('TOTAL:', totalsX + 5, yPos + 8);
+    doc.setFontSize(14);
+    doc.text(this.formatCurrency(invoice.total), 185, yPos + 8, { align: 'right' });
 
-    // NOTES SECTION - Positioned properly
+    // NOTES SECTION - If present
     if (invoice.notes) {
       yPos += 25;
-      doc.setFillColor(250, 251, 252);
-      doc.roundedRect(25, yPos, 160, 20, 6, 6, 'F');
-      
-      // Notes card border
-      doc.setDrawColor(225, 230, 235);
-      doc.setLineWidth(1);
-      doc.roundedRect(25, yPos, 160, 20, 6, 6, 'S');
-      
       doc.setTextColor(...secondaryRgb);
-      doc.setFontSize(11);
+      doc.setFontSize(10);
       doc.setFont('helvetica', 'bold');
-      doc.text('NOTES', 30, yPos + 10);
+      doc.text('NOTES:', 20, yPos);
       
       doc.setTextColor(60, 60, 60);
       doc.setFontSize(9);
       doc.setFont('helvetica', 'normal');
       
-      const noteLines = invoice.notes.split('\n').slice(0, 1);
+      const noteLines = invoice.notes.split('\n').slice(0, 2);
       noteLines.forEach((line, index) => {
-        const truncatedLine = line.length > 85 ? line.substring(0, 85) + '...' : line;
-        doc.text(truncatedLine, 30, yPos + 16 + (index * 4));
+        const truncatedLine = line.length > 80 ? line.substring(0, 80) + '...' : line;
+        doc.text(truncatedLine, 20, yPos + 10 + (index * 6));
       });
-      yPos += 25;
     }
 
-    // MODERN FOOTER - Positioned at bottom
-    doc.setTextColor(140, 140, 140);
-    doc.setFontSize(10);
+    // FOOTER - Always visible at bottom
+    doc.setTextColor(120, 120, 120);
+    doc.setFontSize(9);
     doc.setFont('helvetica', 'normal');
-    doc.text('Thank you for your business!', 105, 275, { align: 'center' });
-    
-    // Footer accent line
-    doc.setDrawColor(...accentRgb);
-    doc.setLineWidth(1.5);
-    doc.line(80, 277, 130, 277);
+    doc.text('Thank you for your business!', 105, 270, { align: 'center' });
   }
 }
