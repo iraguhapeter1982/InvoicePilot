@@ -11,7 +11,7 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/u
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
-import { Plus, Edit, Trash2, User } from "lucide-react";
+import { Plus, Edit, Trash2, User, Mail, Phone, MapPin, Users } from "lucide-react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { insertClientSchema } from "@shared/schema";
@@ -187,56 +187,83 @@ export default function Clients() {
 
   if (isLoading || !isAuthenticated) {
     return (
-      <div className="min-h-screen bg-muted/30 flex items-center justify-center">
+      <div className="min-h-screen bg-gradient-to-br from-background to-muted flex items-center justify-center">
         <div className="animate-spin w-8 h-8 border-4 border-primary border-t-transparent rounded-full" />
       </div>
     );
   }
 
   return (
-    <div className="min-h-screen bg-muted/30">
+    <div className="min-h-screen bg-gradient-to-br from-background via-background to-muted/20 pb-20 lg:pb-0">
       <Navigation />
       
-      <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-        <div className="flex justify-between items-center mb-6">
-          <h2 className="text-2xl font-bold text-foreground">Clients</h2>
-          <Button onClick={() => setShowForm(true)} data-testid="button-new-client">
+      <main className="container animate-fade-in pt-6">
+        {/* Header Section */}
+        <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center gap-4 mb-8">
+          <div>
+            <h1 className="text-3xl font-bold gradient-text">Clients</h1>
+            <p className="text-muted-foreground mt-1">Manage your client relationships</p>
+          </div>
+          <Button 
+            onClick={() => setShowForm(true)} 
+            className="btn-gradient touch-target w-full sm:w-auto"
+            data-testid="button-new-client"
+          >
             <Plus className="h-4 w-4 mr-2" />
             New Client
           </Button>
         </div>
 
+        {/* Loading State */}
         {clientsLoading ? (
-          <div className="flex justify-center py-8">
-            <div className="animate-spin w-6 h-6 border-4 border-primary border-t-transparent rounded-full" />
+          <div className="flex justify-center py-12">
+            <div className="flex flex-col items-center space-y-4">
+              <div className="animate-spin w-8 h-8 border-4 border-primary border-t-transparent rounded-full" />
+              <p className="text-muted-foreground">Loading clients...</p>
+            </div>
           </div>
         ) : clients?.length === 0 ? (
-          <Card>
-            <CardContent className="text-center py-8">
-              <User className="h-12 w-12 text-muted-foreground mx-auto mb-4" />
-              <p className="text-muted-foreground mb-4">No clients yet</p>
-              <Button onClick={() => setShowForm(true)} data-testid="button-add-first-client">
+          /* Empty State */
+          <Card className="modern-card">
+            <CardContent className="flex flex-col items-center justify-center py-12">
+              <div className="w-16 h-16 bg-primary/10 rounded-full flex items-center justify-center mb-4">
+                <Users className="h-8 w-8 text-primary" />
+              </div>
+              <h3 className="text-xl font-semibold mb-2">No clients yet</h3>
+              <p className="text-muted-foreground mb-6 text-center max-w-sm">
+                Start building your client base by adding your first client information.
+              </p>
+              <Button 
+                onClick={() => setShowForm(true)} 
+                className="btn-gradient"
+                data-testid="button-add-first-client"
+              >
+                <Plus className="h-4 w-4 mr-2" />
                 Add your first client
               </Button>
             </CardContent>
           </Card>
         ) : (
+          /* Clients Grid */
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
             {clients?.map((client: Client) => (
-              <Card key={client.id} className="hover:shadow-md transition-shadow">
-                <CardHeader className="pb-3">
+              <Card key={client.id} className="modern-card hover:shadow-xl transition-all duration-300 group">
+                <CardHeader className="pb-4">
                   <div className="flex justify-between items-start">
-                    <div className="flex items-center space-x-3">
-                      <div className="w-10 h-10 bg-primary/10 rounded-full flex items-center justify-center">
-                        <User className="h-5 w-5 text-primary" />
+                    <div className="flex items-center space-x-3 flex-1">
+                      <div className="w-12 h-12 bg-primary/10 rounded-xl flex items-center justify-center group-hover:bg-primary/20 transition-colors">
+                        <User className="h-6 w-6 text-primary" />
                       </div>
-                      <div>
-                        <CardTitle className="text-lg" data-testid={`text-client-name-${client.id}`}>
+                      <div className="min-w-0 flex-1">
+                        <CardTitle className="text-lg truncate" data-testid={`text-client-name-${client.id}`}>
                           {client.name}
                         </CardTitle>
-                        <p className="text-sm text-muted-foreground" data-testid={`text-client-email-${client.id}`}>
-                          {client.email}
-                        </p>
+                        <div className="flex items-center gap-1 text-sm text-muted-foreground mt-1">
+                          <Mail className="h-3 w-3" />
+                          <span className="truncate" data-testid={`text-client-email-${client.id}`}>
+                            {client.email}
+                          </span>
+                        </div>
                       </div>
                     </div>
                     <div className="flex space-x-1">
@@ -244,6 +271,7 @@ export default function Clients() {
                         variant="ghost"
                         size="sm"
                         onClick={() => handleEdit(client)}
+                        className="touch-target"
                         data-testid={`button-edit-client-${client.id}`}
                       >
                         <Edit className="h-4 w-4" />
@@ -253,6 +281,7 @@ export default function Clients() {
                         size="sm"
                         onClick={() => deleteClientMutation.mutate(client.id)}
                         disabled={deleteClientMutation.isPending}
+                        className="touch-target text-red-600 hover:text-red-700 hover:bg-red-50"
                         data-testid={`button-delete-client-${client.id}`}
                       >
                         <Trash2 className="h-4 w-4" />
@@ -260,15 +289,26 @@ export default function Clients() {
                     </div>
                   </div>
                 </CardHeader>
-                <CardContent>
+                <CardContent className="space-y-3">
                   {client.phone && (
-                    <p className="text-sm text-muted-foreground mb-2" data-testid={`text-client-phone-${client.id}`}>
-                      {client.phone}
-                    </p>
+                    <div className="flex items-center gap-2 text-sm text-muted-foreground">
+                      <Phone className="h-4 w-4" />
+                      <span data-testid={`text-client-phone-${client.id}`}>
+                        {client.phone}
+                      </span>
+                    </div>
                   )}
                   {client.address && (
-                    <p className="text-sm text-muted-foreground" data-testid={`text-client-address-${client.id}`}>
-                      {client.address}
+                    <div className="flex items-start gap-2 text-sm text-muted-foreground">
+                      <MapPin className="h-4 w-4 mt-0.5 flex-shrink-0" />
+                      <span className="line-clamp-2" data-testid={`text-client-address-${client.id}`}>
+                        {client.address}
+                      </span>
+                    </div>
+                  )}
+                  {!client.phone && !client.address && (
+                    <p className="text-sm text-muted-foreground italic">
+                      No additional contact information
                     </p>
                   )}
                 </CardContent>
@@ -279,7 +319,7 @@ export default function Clients() {
 
         {/* Client Form Modal */}
         <Dialog open={showForm} onOpenChange={handleCloseForm}>
-          <DialogContent>
+          <DialogContent className="max-w-md m-4">
             <DialogHeader>
               <DialogTitle>
                 {editingClient ? "Edit Client" : "Add New Client"}
@@ -295,7 +335,7 @@ export default function Clients() {
                     <FormItem>
                       <FormLabel>Name *</FormLabel>
                       <FormControl>
-                        <Input {...field} data-testid="input-client-name" />
+                        <Input {...field} placeholder="Client name" data-testid="input-client-name" />
                       </FormControl>
                       <FormMessage />
                     </FormItem>
@@ -309,7 +349,7 @@ export default function Clients() {
                     <FormItem>
                       <FormLabel>Email *</FormLabel>
                       <FormControl>
-                        <Input type="email" {...field} data-testid="input-client-email" />
+                        <Input type="email" {...field} placeholder="client@example.com" data-testid="input-client-email" />
                       </FormControl>
                       <FormMessage />
                     </FormItem>
@@ -323,7 +363,7 @@ export default function Clients() {
                     <FormItem>
                       <FormLabel>Phone</FormLabel>
                       <FormControl>
-                        <Input {...field} data-testid="input-client-phone" />
+                        <Input {...field} placeholder="(555) 123-4567" data-testid="input-client-phone" />
                       </FormControl>
                       <FormMessage />
                     </FormItem>
@@ -337,7 +377,12 @@ export default function Clients() {
                     <FormItem>
                       <FormLabel>Address</FormLabel>
                       <FormControl>
-                        <Textarea {...field} data-testid="input-client-address" />
+                        <Textarea 
+                          {...field} 
+                          placeholder="Street address, city, state, zip"
+                          rows={3}
+                          data-testid="input-client-address" 
+                        />
                       </FormControl>
                       <FormMessage />
                     </FormItem>
@@ -351,6 +396,7 @@ export default function Clients() {
                   <Button 
                     type="submit" 
                     disabled={createClientMutation.isPending || updateClientMutation.isPending}
+                    className="btn-gradient"
                     data-testid="button-save-client"
                   >
                     {editingClient ? "Update Client" : "Create Client"}
