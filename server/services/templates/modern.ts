@@ -22,23 +22,23 @@ export class ModernTemplate extends BaseTemplate {
     let yPos = 25;
 
     // LEFT SIDE - Logo and Company Info SIDE BY SIDE like the preview
-    // Small logo positioned on the left
-    this.addLogo(doc, config, 20, yPos, 30, 15);
+    // Very small logo positioned on the left
+    this.addLogo(doc, config, 20, yPos, 20, 12);
     
     // Company name and subtitle positioned to the RIGHT of the logo
     doc.setTextColor(0, 0, 0);
     doc.setFontSize(16);
     doc.setFont('helvetica', 'bold');
     const companyName = user.businessName || `${user.firstName || ''} ${user.lastName || ''}`;
-    doc.text(companyName, 55, yPos + 8);
+    doc.text(companyName, 45, yPos + 6);
     
     doc.setFontSize(9);
     doc.setFont('helvetica', 'normal');
     doc.setTextColor(100, 100, 100);
-    doc.text('Professional Services', 55, yPos + 16);
+    doc.text('Professional Services', 45, yPos + 14);
     
-    // Company address and contact info (moved down below logo/name)
-    yPos += 25;
+    // Company address and contact info (moved down below logo/name and invoice details)
+    yPos += 50;
     doc.setFontSize(9);
     doc.setTextColor(120, 120, 120);
     
@@ -66,32 +66,32 @@ export class ModernTemplate extends BaseTemplate {
     doc.setTextColor(...primaryRgb);
     doc.setFontSize(24);
     doc.setFont('helvetica', 'bold');
-    doc.text('INVOICE', 190, 45, { align: 'right' });
+    doc.text('INVOICE', 190, yPos + 6, { align: 'right' });
 
     // Invoice details card-like area
     doc.setFillColor(250, 250, 250);
-    doc.roundedRect(140, 50, 55, 35, 3, 3, 'F');
+    doc.roundedRect(140, yPos + 10, 55, 35, 3, 3, 'F');
     doc.setDrawColor(230, 230, 230);
     doc.setLineWidth(0.3);
-    doc.roundedRect(140, 50, 55, 35, 3, 3, 'S');
+    doc.roundedRect(140, yPos + 10, 55, 35, 3, 3, 'S');
 
     doc.setTextColor(0, 0, 0);
     doc.setFontSize(9);
     doc.setFont('helvetica', 'normal');
-    doc.text('Invoice #:', 145, 60);
+    doc.text('Invoice #:', 145, yPos + 20);
     doc.setFont('helvetica', 'bold');
-    doc.text(`${invoice.invoiceNumber}`, 190, 60, { align: 'right' });
+    doc.text(`${invoice.invoiceNumber}`, 190, yPos + 20, { align: 'right' });
 
     doc.setFont('helvetica', 'normal');
-    doc.text('Date:', 145, 67);
+    doc.text('Date:', 145, yPos + 27);
     doc.setFont('helvetica', 'bold');
-    doc.text(new Date(invoice.issueDate).toLocaleDateString(), 190, 67, { align: 'right' });
+    doc.text(new Date(invoice.issueDate).toLocaleDateString(), 190, yPos + 27, { align: 'right' });
 
     doc.setFont('helvetica', 'normal');
-    doc.text('Due Date:', 145, 74);
+    doc.text('Due Date:', 145, yPos + 34);
     doc.setFont('helvetica', 'bold');
     doc.setTextColor(...accentRgb);
-    doc.text(new Date(invoice.dueDate).toLocaleDateString(), 190, 74, { align: 'right' });
+    doc.text(new Date(invoice.dueDate).toLocaleDateString(), 190, yPos + 34, { align: 'right' });
 
     // BILL TO SECTION (positioned higher)
     yPos = 100;
