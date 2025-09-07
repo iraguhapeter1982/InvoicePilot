@@ -24,56 +24,56 @@ export class ModernTemplate extends BaseTemplate {
     doc.setFont('helvetica', 'bold');
     doc.text('INVOICE', 25, 30);
 
-    // ELEVATED INVOICE DETAILS CARD - Modern card design
+    // ELEVATED INVOICE DETAILS CARD - Positioned below header
     doc.setFillColor(255, 255, 255);
-    doc.roundedRect(130, 20, 75, 60, 8, 8, 'F');
+    doc.roundedRect(130, 55, 70, 55, 8, 8, 'F');
     
     // Card shadow effect
     doc.setFillColor(0, 0, 0, 0.1);
-    doc.roundedRect(132, 22, 75, 60, 8, 8, 'F');
+    doc.roundedRect(132, 57, 70, 55, 8, 8, 'F');
     doc.setFillColor(255, 255, 255);
-    doc.roundedRect(130, 20, 75, 60, 8, 8, 'F');
+    doc.roundedRect(130, 55, 70, 55, 8, 8, 'F');
     
     // Card border
     doc.setDrawColor(235, 235, 235);
     doc.setLineWidth(1);
-    doc.roundedRect(130, 20, 75, 60, 8, 8, 'S');
+    doc.roundedRect(130, 55, 70, 55, 8, 8, 'S');
     
     // Invoice details with professional typography hierarchy
     doc.setTextColor(...primaryRgb);
-    doc.setFontSize(11);
-    doc.setFont('helvetica', 'bold');
-    doc.text('INVOICE DETAILS', 135, 32);
-    
-    doc.setTextColor(0, 0, 0);
-    doc.setFontSize(18);
-    doc.setFont('helvetica', 'bold');
-    doc.text(`#${invoice.invoiceNumber}`, 135, 45);
-    
     doc.setFontSize(10);
+    doc.setFont('helvetica', 'bold');
+    doc.text('INVOICE DETAILS', 135, 67);
+    
+    doc.setTextColor(0, 0, 0);
+    doc.setFontSize(16);
+    doc.setFont('helvetica', 'bold');
+    doc.text(`#${invoice.invoiceNumber}`, 135, 80);
+    
+    doc.setFontSize(9);
     doc.setFont('helvetica', 'normal');
     doc.setTextColor(100, 100, 100);
-    doc.text('Issue Date:', 135, 55);
+    doc.text('Issue Date:', 135, 90);
     doc.setTextColor(0, 0, 0);
     doc.setFont('helvetica', 'bold');
-    doc.text(new Date(invoice.issueDate).toLocaleDateString(), 135, 63);
+    doc.text(new Date(invoice.issueDate).toLocaleDateString(), 135, 98);
     
     doc.setFont('helvetica', 'normal');
     doc.setTextColor(100, 100, 100);
-    doc.text('Due Date:', 135, 71);
+    doc.text('Due Date:', 135, 106);
     doc.setTextColor(...accentRgb);
     doc.setFont('helvetica', 'bold');
-    doc.text(new Date(invoice.dueDate).toLocaleDateString(), 135, 79);
+    doc.text(new Date(invoice.dueDate).toLocaleDateString(), 135, 114);
 
-    // COMPANY SECTION - Professional layout
-    let yPos = 95;
+    // COMPANY SECTION - Professional layout below header
+    let yPos = 55;
     
-    // Logo with proper spacing
+    // Logo positioned properly below header
     this.addLogo(doc, config, 25, yPos, 60, 30);
     
     // Company information with enhanced typography
     doc.setTextColor(0, 0, 0);
-    doc.setFontSize(20);
+    doc.setFontSize(18);
     doc.setFont('helvetica', 'bold');
     const companyName = user.businessName || `${user.firstName || ''} ${user.lastName || ''}`;
     doc.text(companyName, 25, yPos + 40);
@@ -106,7 +106,7 @@ export class ModernTemplate extends BaseTemplate {
     }
 
     // BILL TO CARD - Modern elevated design
-    yPos = 95;
+    yPos = 125;
     doc.setFillColor(248, 250, 252);
     doc.roundedRect(120, yPos, 85, 50, 8, 8, 'F');
     
@@ -156,7 +156,7 @@ export class ModernTemplate extends BaseTemplate {
     doc.text(emailText, 125, clientYPos);
 
     // MODERN TABLE DESIGN - Professional with shadows
-    yPos = 165;
+    yPos = 185;
     
     // Table header with gradient effect
     doc.setFillColor(...primaryRgb);
@@ -208,41 +208,20 @@ export class ModernTemplate extends BaseTemplate {
       yPos += 14;
     });
 
-    // MODERN TOTALS SECTION - Elevated card design
-    yPos += 20;
+    // MODERN TOTALS SECTION - Properly positioned
+    yPos += 15;
     const totalsX = 110;
     const totalsWidth = 75;
     
-    // Totals card with shadow
-    doc.setFillColor(255, 255, 255);
-    doc.roundedRect(totalsX, yPos - 5, totalsWidth, 55, 8, 8, 'F');
-    
-    // Card shadow
-    doc.setFillColor(0, 0, 0, 0.08);
-    doc.roundedRect(totalsX + 2, yPos - 3, totalsWidth, 55, 8, 8, 'F');
-    doc.setFillColor(255, 255, 255);
-    doc.roundedRect(totalsX, yPos - 5, totalsWidth, 55, 8, 8, 'F');
-    
-    // Card border
-    doc.setDrawColor(230, 230, 230);
-    doc.setLineWidth(1);
-    doc.roundedRect(totalsX, yPos - 5, totalsWidth, 55, 8, 8, 'S');
-    
+    // Subtotal with clean layout
     doc.setTextColor(80, 80, 80);
     doc.setFontSize(11);
     doc.setFont('helvetica', 'normal');
-    
-    // Subtotal
-    doc.text('Subtotal:', totalsX + 8, yPos + 8);
+    doc.text('Subtotal:', totalsX + 8, yPos);
     doc.setFont('helvetica', 'bold');
     doc.setTextColor(0, 0, 0);
-    doc.text(this.formatCurrency(invoice.subtotal), totalsX + totalsWidth - 8, yPos + 8, { align: 'right' });
-    
-    // Separator line
-    doc.setDrawColor(240, 240, 240);
-    doc.setLineWidth(0.5);
-    doc.line(totalsX + 8, yPos + 12, totalsX + totalsWidth - 8, yPos + 12);
-    yPos += 15;
+    doc.text(this.formatCurrency(invoice.subtotal), totalsX + totalsWidth - 8, yPos, { align: 'right' });
+    yPos += 12;
     
     // Tax
     if (invoice.taxAmount && parseFloat(invoice.taxAmount) > 0) {
@@ -252,8 +231,6 @@ export class ModernTemplate extends BaseTemplate {
       doc.setFont('helvetica', 'bold');
       doc.setTextColor(0, 0, 0);
       doc.text(this.formatCurrency(invoice.taxAmount), totalsX + totalsWidth - 8, yPos, { align: 'right' });
-      doc.setDrawColor(240, 240, 240);
-      doc.line(totalsX + 8, yPos + 4, totalsX + totalsWidth - 8, yPos + 4);
       yPos += 12;
     }
     
@@ -264,64 +241,58 @@ export class ModernTemplate extends BaseTemplate {
       doc.text(`Discount (${invoice.discountRate ? parseFloat(invoice.discountRate).toFixed(1) : '0'}%):`, totalsX + 8, yPos);
       doc.setFont('helvetica', 'bold');
       doc.text(`-${this.formatCurrency(invoice.discountAmount)}`, totalsX + totalsWidth - 8, yPos, { align: 'right' });
-      doc.setDrawColor(...accentRgb);
-      doc.line(totalsX + 8, yPos + 4, totalsX + totalsWidth - 8, yPos + 4);
       yPos += 12;
     }
 
-    // TOTAL - Prominent modern styling
+    // TOTAL - Prominent styling with proper positioning
+    yPos += 5;
     doc.setFillColor(...accentRgb);
-    doc.roundedRect(totalsX, yPos, totalsWidth, 20, 6, 6, 'F');
-    
-    // Total shadow for elevation
-    doc.setFillColor(0, 0, 0, 0.15);
-    doc.roundedRect(totalsX + 1, yPos + 1, totalsWidth, 20, 6, 6, 'F');
-    doc.setFillColor(...accentRgb);
-    doc.roundedRect(totalsX, yPos, totalsWidth, 20, 6, 6, 'F');
+    doc.roundedRect(totalsX, yPos, totalsWidth, 18, 6, 6, 'F');
     
     doc.setTextColor(255, 255, 255);
     doc.setFontSize(14);
     doc.setFont('helvetica', 'bold');
-    doc.text('TOTAL:', totalsX + 8, yPos + 13);
-    doc.setFontSize(18);
-    doc.text(this.formatCurrency(invoice.total), totalsX + totalsWidth - 8, yPos + 13, { align: 'right' });
+    doc.text('TOTAL:', totalsX + 8, yPos + 12);
+    doc.setFontSize(16);
+    doc.text(this.formatCurrency(invoice.total), totalsX + totalsWidth - 8, yPos + 12, { align: 'right' });
 
-    // NOTES SECTION - Modern card design
+    // NOTES SECTION - Positioned properly
     if (invoice.notes) {
-      yPos += 35;
+      yPos += 25;
       doc.setFillColor(250, 251, 252);
-      doc.roundedRect(25, yPos, 160, 25, 6, 6, 'F');
+      doc.roundedRect(25, yPos, 160, 20, 6, 6, 'F');
       
       // Notes card border
       doc.setDrawColor(225, 230, 235);
       doc.setLineWidth(1);
-      doc.roundedRect(25, yPos, 160, 25, 6, 6, 'S');
+      doc.roundedRect(25, yPos, 160, 20, 6, 6, 'S');
       
       doc.setTextColor(...secondaryRgb);
-      doc.setFontSize(12);
+      doc.setFontSize(11);
       doc.setFont('helvetica', 'bold');
-      doc.text('NOTES', 30, yPos + 12);
+      doc.text('NOTES', 30, yPos + 10);
       
       doc.setTextColor(60, 60, 60);
       doc.setFontSize(9);
       doc.setFont('helvetica', 'normal');
       
-      const noteLines = invoice.notes.split('\n').slice(0, 2);
+      const noteLines = invoice.notes.split('\n').slice(0, 1);
       noteLines.forEach((line, index) => {
         const truncatedLine = line.length > 85 ? line.substring(0, 85) + '...' : line;
-        doc.text(truncatedLine, 30, yPos + 18 + (index * 4));
+        doc.text(truncatedLine, 30, yPos + 16 + (index * 4));
       });
+      yPos += 25;
     }
 
-    // MODERN FOOTER - Clean and professional
+    // MODERN FOOTER - Positioned at bottom
     doc.setTextColor(140, 140, 140);
     doc.setFontSize(10);
     doc.setFont('helvetica', 'normal');
-    doc.text('Thank you for your business!', 105, 285, { align: 'center' });
+    doc.text('Thank you for your business!', 105, 275, { align: 'center' });
     
     // Footer accent line
     doc.setDrawColor(...accentRgb);
     doc.setLineWidth(1.5);
-    doc.line(80, 287, 130, 287);
+    doc.line(80, 277, 130, 277);
   }
 }
