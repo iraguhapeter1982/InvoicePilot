@@ -18,51 +18,51 @@ export class ModernTemplate extends BaseTemplate {
     doc.setFillColor(...secondaryRgb);
     doc.rect(0, 28, 210, 7, 'F');
 
-    // Large, bold INVOICE title in header
+    // Large, bold INVOICE title in header - repositioned to avoid overlap
     doc.setTextColor(255, 255, 255);
-    doc.setFontSize(32);
+    doc.setFontSize(28);
     doc.setFont('helvetica', 'bold');
     doc.text('INVOICE', 20, 25);
 
-    // Modern card for invoice details
+    // Modern card for invoice details - repositioned to avoid header overlap
     doc.setFillColor(255, 255, 255);
-    doc.roundedRect(130, 50, 70, 50, 8, 8, 'F');
+    doc.roundedRect(125, 45, 70, 55, 8, 8, 'F');
     doc.setDrawColor(230, 230, 230);
     doc.setLineWidth(1);
-    doc.roundedRect(130, 50, 70, 50, 8, 8, 'S');
+    doc.roundedRect(125, 45, 70, 55, 8, 8, 'S');
     
     // Invoice details with clean typography
     doc.setTextColor(0, 0, 0);
     doc.setFontSize(16);
     doc.setFont('helvetica', 'bold');
-    doc.text(`#${invoice.invoiceNumber}`, 135, 65);
+    doc.text(`#${invoice.invoiceNumber}`, 130, 62);
     
-    doc.setFontSize(11);
+    doc.setFontSize(10);
     doc.setFont('helvetica', 'normal');
     doc.setTextColor(100, 100, 100);
-    doc.text('Issue Date:', 135, 77);
+    doc.text('Issue Date:', 130, 74);
     doc.setTextColor(0, 0, 0);
-    doc.text(new Date(invoice.issueDate).toLocaleDateString(), 135, 85);
+    doc.text(new Date(invoice.issueDate).toLocaleDateString(), 130, 82);
     
     doc.setTextColor(100, 100, 100);
-    doc.text('Due Date:', 135, 93);
+    doc.text('Due Date:', 130, 90);
     doc.setTextColor(...accentRgb);
     doc.setFont('helvetica', 'bold');
-    doc.text(new Date(invoice.dueDate).toLocaleDateString(), 135, 101);
+    doc.text(new Date(invoice.dueDate).toLocaleDateString(), 130, 98);
 
-    // Logo with perfect positioning
-    this.addLogo(doc, config, 20, 55, 80, 40);
+    // Logo positioned to not overlap with company info
+    this.addLogo(doc, config, 20, 50, 70, 35);
 
-    // Company information with modern layout
-    let yPos = 110;
+    // Company information positioned below logo with proper spacing
+    let yPos = 95;
     doc.setTextColor(0, 0, 0);
-    doc.setFontSize(20);
+    doc.setFontSize(18);
     doc.setFont('helvetica', 'bold');
     const companyName = user.businessName || `${user.firstName || ''} ${user.lastName || ''}`;
     doc.text(companyName, 20, yPos);
     
     // Company details with clean spacing
-    yPos += 15;
+    yPos += 12;
     doc.setFontSize(10);
     doc.setFont('helvetica', 'normal');
     doc.setTextColor(80, 80, 80);
@@ -72,29 +72,29 @@ export class ModernTemplate extends BaseTemplate {
       addressLines.forEach((line, index) => {
         doc.text(line, 20, yPos + (index * 5));
       });
-      yPos += addressLines.length * 5 + 8;
+      yPos += addressLines.length * 5 + 6;
     }
     
     if (user.email) {
       doc.text(user.email, 20, yPos);
-      yPos += 6;
+      yPos += 5;
     }
     if (user.businessPhone) {
       doc.text(user.businessPhone, 20, yPos);
-      yPos += 6;
+      yPos += 5;
     }
     if (user.taxId) {
       doc.setTextColor(120, 120, 120);
       doc.text(`Tax ID: ${user.taxId}`, 20, yPos);
     }
 
-    // Modern Bill To section with card design
-    yPos = 150;
+    // Modern Bill To section with card design - adjusted position
+    yPos = 140;
     doc.setFillColor(248, 250, 252);
-    doc.roundedRect(20, yPos, 85, 40, 6, 6, 'F');
+    doc.roundedRect(20, yPos, 85, 45, 6, 6, 'F');
     doc.setDrawColor(220, 220, 220);
     doc.setLineWidth(0.5);
-    doc.roundedRect(20, yPos, 85, 40, 6, 6, 'S');
+    doc.roundedRect(20, yPos, 85, 45, 6, 6, 'S');
     
     doc.setTextColor(...primaryRgb);
     doc.setFontSize(12);
@@ -120,8 +120,8 @@ export class ModernTemplate extends BaseTemplate {
     }
     doc.text(invoice.client.email.length > 25 ? invoice.client.email.substring(0, 25) + '...' : invoice.client.email, 25, clientYPos);
 
-    // Modern table design
-    yPos = 210;
+    // Modern table design - adjusted for better spacing
+    yPos = 200;
     
     // Table header with gradient
     doc.setFillColor(...primaryRgb);
