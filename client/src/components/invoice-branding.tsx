@@ -53,13 +53,13 @@ export default function InvoiceBranding() {
   useEffect(() => {
     if (user) {
       form.reset({
-        logoUrl: user.logoUrl || "",
-        brandPrimaryColor: user.brandPrimaryColor || "#3b82f6",
-        brandSecondaryColor: user.brandSecondaryColor || "#1e40af",
-        brandAccentColor: user.brandAccentColor || "#10b981",
-        invoiceTemplate: (user.invoiceTemplate as "modern" | "classic" | "minimal") || "modern",
+        logoUrl: (user as any).logoUrl || "",
+        brandPrimaryColor: (user as any).brandPrimaryColor || "#3b82f6",
+        brandSecondaryColor: (user as any).brandSecondaryColor || "#1e40af",
+        brandAccentColor: (user as any).brandAccentColor || "#10b981",
+        invoiceTemplate: ((user as any).invoiceTemplate as "modern" | "classic" | "minimal") || "modern",
       });
-      setLogoPreview(user.logoUrl || "");
+      setLogoPreview((user as any).logoUrl || "");
     }
   }, [user, form]);
 

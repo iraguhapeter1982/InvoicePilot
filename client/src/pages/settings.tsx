@@ -5,6 +5,7 @@ import { useQuery, useMutation } from "@tanstack/react-query";
 import { isUnauthorizedError } from "@/lib/authUtils";
 import { queryClient, apiRequest } from "@/lib/queryClient";
 import Navigation from "@/components/navigation";
+import InvoiceBranding from "@/components/invoice-branding";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
@@ -266,6 +267,9 @@ export default function Settings() {
               </Form>
             </CardContent>
           </Card>
+
+          {/* Invoice Branding */}
+          <InvoiceBranding />
 
           {/* Account Actions */}
           <Card className="modern-card">
