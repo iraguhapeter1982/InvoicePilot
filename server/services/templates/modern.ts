@@ -10,13 +10,17 @@ export class ModernTemplate extends BaseTemplate {
     const secondaryRgb = this.hexToRgb(config.colors.secondary);
     const accentRgb = this.hexToRgb(config.colors.accent);
 
-    // SMALL ORANGE HEADER BAND - Thin like the preview
+    // VERY THIN ORANGE HEADER BAND - Like the preview  
     doc.setFillColor(...primaryRgb);
-    doc.rect(0, 0, 210, 8, 'F');
+    doc.rect(0, 0, 210, 6, 'F');
     
     // Add gradient effect by overlaying a slightly different color
     doc.setFillColor(primaryRgb[0] + 15, primaryRgb[1] + 10, primaryRgb[2] - 5);
     doc.rect(0, 0, 210, 1, 'F');
+    
+    // TEST: Add a red rectangle to verify this template is being used
+    doc.setFillColor(255, 0, 0);
+    doc.rect(10, 10, 20, 5, 'F');
 
     // MAIN CONTENT AREA - Starting near the top, overlapping header
     let yPos = 25;
