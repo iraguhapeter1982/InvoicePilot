@@ -127,9 +127,6 @@ export async function registerRoutes(app: Express): Promise<Server> {
       const userId = req.user.claims.sub;
       const { items, ...invoiceData } = req.body;
       
-      console.log("Received invoice data:", JSON.stringify(req.body, null, 2));
-      console.log("Items to validate:", JSON.stringify(items, null, 2));
-      
       const invoiceNumber = await storage.getNextInvoiceNumber(userId);
       const invoice = insertInvoiceSchema.parse({ 
         ...invoiceData, 
@@ -137,10 +134,9 @@ export async function registerRoutes(app: Express): Promise<Server> {
         invoiceNumber 
       });
       
-      const validatedItems = items.map((item: any, index: number) => {
-        console.log(`Validating item ${index}:`, JSON.stringify(item, null, 2));
-        return insertInvoiceItemSchema.parse(item);
-      });
+      const validatedItems = items.map((item: any) => 
+        insertInvoiceItemSchema.parse(item)
+      );
       
       const newInvoice = await storage.createInvoice(invoice, validatedItems);
       res.json(newInvoice);
