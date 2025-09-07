@@ -146,6 +146,7 @@ export const insertInvoiceSchema = createInsertSchema(invoices).omit({
 
 export const insertInvoiceItemSchema = createInsertSchema(invoiceItems).omit({
   id: true,
+  invoiceId: true,
   createdAt: true,
 });
 
