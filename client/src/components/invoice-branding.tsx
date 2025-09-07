@@ -303,9 +303,9 @@ export default function InvoiceBranding() {
               render={({ field }) => (
                 <FormItem>
                   <FormLabel>Invoice Template</FormLabel>
-                  <Select onValueChange={field.onChange} defaultValue={field.value}>
+                  <Select onValueChange={field.onChange} value={field.value}>
                     <FormControl>
-                      <SelectTrigger>
+                      <SelectTrigger data-testid="select-invoice-template">
                         <SelectValue placeholder="Select a template" />
                       </SelectTrigger>
                     </FormControl>

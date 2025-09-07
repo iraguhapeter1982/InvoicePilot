@@ -70,31 +70,55 @@ export default function InvoicePreview({ invoice, onDownload, onSend }: InvoiceP
       </div>
 
       {/* Professional Invoice Template */}
-      <div className="bg-card border border-border rounded-lg p-8 shadow-sm">
+      <div className={`bg-card border border-border rounded-lg shadow-sm ${
+        template === 'modern' ? 'p-8' : 
+        template === 'classic' ? 'p-8 bg-gradient-to-br from-white to-gray-50' : 'p-6'
+      }`}>
+        {/* Template-specific styling based on selected template */}
+        {template === 'modern' && (
+          <div className="h-2 rounded-t-lg mb-6" style={{ 
+            background: `linear-gradient(90deg, ${primaryColor}, ${secondaryColor})` 
+          }} />
+        )}
+        
         {/* Invoice Header */}
-        <div className="flex justify-between items-start mb-8">
+        <div className={`flex justify-between items-start ${
+          template === 'minimal' ? 'mb-6' : 'mb-8'
+        }`}>
           <div>
-            <div className="flex items-center space-x-3 mb-4">
+            <div className={`flex items-center space-x-3 ${
+              template === 'minimal' ? 'mb-3' : 'mb-4'
+            }`}>
               {logoUrl ? (
                 <img 
                   src={logoUrl} 
                   alt="Company Logo" 
-                  className="h-12 w-auto object-contain"
+                  className={`object-contain ${
+                    template === 'minimal' ? 'h-10 w-auto' : 'h-12 w-auto'
+                  }`}
                   data-testid="company-logo"
                 />
               ) : (
                 <div 
-                  className="w-10 h-10 rounded-lg flex items-center justify-center"
+                  className={`rounded-lg flex items-center justify-center ${
+                    template === 'minimal' ? 'w-8 h-8' : 'w-10 h-10'
+                  }`}
                   style={{ backgroundColor: primaryColor }}
                 >
-                  <Receipt className="h-6 w-6 text-white" />
+                  <Receipt className={`text-white ${
+                    template === 'minimal' ? 'h-4 w-4' : 'h-6 w-6'
+                  }`} />
                 </div>
               )}
               <div>
-                <h1 className="text-xl font-bold text-foreground" data-testid="text-business-name">
-                  {user?.businessName || `${user?.firstName} ${user?.lastName}`}
+                <h1 className={`font-bold text-foreground ${
+                  template === 'minimal' ? 'text-lg' : 'text-xl'
+                }`} data-testid="text-business-name">
+                  {user?.businessName || `${user?.firstName || ''} ${user?.lastName || ''}`}
                 </h1>
-                <p className="text-sm text-muted-foreground">Professional Services</p>
+                {template !== 'minimal' && (
+                  <p className="text-sm text-muted-foreground">Professional Services</p>
+                )}
               </div>
             </div>
             <div className="text-sm text-muted-foreground space-y-1">
@@ -210,20 +234,20 @@ export default function InvoicePreview({ invoice, onDownload, onSend }: InvoiceP
                 ${parseFloat(invoice.subtotal).toFixed(2)}
               </span>
             </div>
-            {parseFloat(invoice.taxAmount) > 0 && (
+            {invoice.taxAmount && parseFloat(invoice.taxAmount) > 0 && (
               <div className="flex justify-between py-1">
                 <span className="text-muted-foreground">
-                  Tax ({parseFloat(invoice.taxRate).toFixed(1)}%):
+                  Tax ({invoice.taxRate ? parseFloat(invoice.taxRate).toFixed(1) : '0'}%):
                 </span>
                 <span className="font-medium text-foreground" data-testid="text-preview-tax">
                   ${parseFloat(invoice.taxAmount).toFixed(2)}
                 </span>
               </div>
             )}
-            {parseFloat(invoice.discountAmount) > 0 && (
+            {invoice.discountAmount && parseFloat(invoice.discountAmount) > 0 && (
               <div className="flex justify-between py-1">
                 <span className="text-muted-foreground">
-                  Discount ({parseFloat(invoice.discountRate).toFixed(1)}%):
+                  Discount ({invoice.discountRate ? parseFloat(invoice.discountRate).toFixed(1) : '0'}%):
                 </span>
                 <span className="font-medium text-foreground" data-testid="text-preview-discount">
                   -${parseFloat(invoice.discountAmount).toFixed(2)}
