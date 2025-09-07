@@ -13,7 +13,7 @@ let stripe: Stripe | null = null;
 // Initialize Stripe only if API key is available
 if (process.env.STRIPE_SECRET_KEY) {
   stripe = new Stripe(process.env.STRIPE_SECRET_KEY, {
-    apiVersion: "2024-11-20.acacia",
+    apiVersion: "2025-08-27.basil",
   });
 }
 
