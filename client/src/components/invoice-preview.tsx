@@ -13,16 +13,23 @@ interface InvoicePreviewProps {
 export default function InvoicePreview({ invoice, onDownload, onSend }: InvoicePreviewProps) {
   const { user } = useAuth();
 
+  // Get user's brand colors with fallbacks
+  const primaryColor = (user as any)?.brandPrimaryColor || "#3b82f6";
+  const secondaryColor = (user as any)?.brandSecondaryColor || "#1e40af";
+  const accentColor = (user as any)?.brandAccentColor || "#10b981";
+  const logoUrl = (user as any)?.logoUrl;
+  const template = (user as any)?.invoiceTemplate || "modern";
+
   const getStatusBadge = (status: string) => {
     switch (status) {
       case "paid":
-        return <Badge className="bg-green-100 text-green-800 hover:bg-green-100">Paid</Badge>;
+        return <Badge className="bg-emerald-500/10 text-emerald-600 border-emerald-200 hover:bg-emerald-500/10">Paid</Badge>;
       case "sent":
-        return <Badge className="bg-amber-100 text-amber-800 hover:bg-amber-100">Pending</Badge>;
+        return <Badge className="bg-amber-500/10 text-amber-600 border-amber-200 hover:bg-amber-500/10">Pending</Badge>;
       case "overdue":
-        return <Badge className="bg-red-100 text-red-800 hover:bg-red-100">Overdue</Badge>;
+        return <Badge className="bg-red-500/10 text-red-600 border-red-200 hover:bg-red-500/10">Overdue</Badge>;
       default:
-        return <Badge variant="secondary">Draft</Badge>;
+        return <Badge variant="secondary" className="bg-slate-500/10 text-slate-600">Draft</Badge>;
     }
   };
 
@@ -68,9 +75,21 @@ export default function InvoicePreview({ invoice, onDownload, onSend }: InvoiceP
         <div className="flex justify-between items-start mb-8">
           <div>
             <div className="flex items-center space-x-3 mb-4">
-              <div className="w-10 h-10 bg-primary rounded-lg flex items-center justify-center">
-                <Receipt className="h-6 w-6 text-primary-foreground" />
-              </div>
+              {logoUrl ? (
+                <img 
+                  src={logoUrl} 
+                  alt="Company Logo" 
+                  className="h-12 w-auto object-contain"
+                  data-testid="company-logo"
+                />
+              ) : (
+                <div 
+                  className="w-10 h-10 rounded-lg flex items-center justify-center"
+                  style={{ backgroundColor: primaryColor }}
+                >
+                  <Receipt className="h-6 w-6 text-white" />
+                </div>
+              )}
               <div>
                 <h1 className="text-xl font-bold text-foreground" data-testid="text-business-name">
                   {user?.businessName || `${user?.firstName} ${user?.lastName}`}
@@ -98,7 +117,7 @@ export default function InvoicePreview({ invoice, onDownload, onSend }: InvoiceP
             </div>
           </div>
           <div className="text-right">
-            <h2 className="text-2xl font-bold text-primary mb-2">INVOICE</h2>
+            <h2 className="text-2xl font-bold mb-2" style={{ color: primaryColor }}>INVOICE</h2>
             <div className="text-sm space-y-1">
               <p>
                 <span className="font-medium">Invoice #:</span>{" "}
@@ -122,7 +141,7 @@ export default function InvoicePreview({ invoice, onDownload, onSend }: InvoiceP
 
         {/* Bill To Section */}
         <div className="mb-8">
-          <h3 className="font-semibold text-foreground mb-3 flex items-center">
+          <h3 className="font-semibold mb-3 flex items-center" style={{ color: secondaryColor }}>
             <Building className="h-4 w-4 mr-2" />
             Bill To:
           </h3>
@@ -214,7 +233,7 @@ export default function InvoicePreview({ invoice, onDownload, onSend }: InvoiceP
             <div className="border-t border-border pt-2">
               <div className="flex justify-between py-1">
                 <span className="text-lg font-semibold text-foreground">Total:</span>
-                <span className="text-lg font-bold text-primary" data-testid="text-preview-total">
+                <span className="text-lg font-bold" style={{ color: accentColor }} data-testid="text-preview-total">
                   ${parseFloat(invoice.total).toFixed(2)}
                 </span>
               </div>
