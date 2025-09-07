@@ -18,31 +18,27 @@ export class ModernTemplate extends BaseTemplate {
     doc.setFillColor(primaryRgb[0] + 15, primaryRgb[1] + 10, primaryRgb[2] - 5);
     doc.rect(0, 0, 210, 1, 'F');
     
-    // TEST: Add a red rectangle to verify this template is being used
-    doc.setFillColor(255, 0, 0);
-    doc.rect(10, 10, 20, 5, 'F');
-
     // MAIN CONTENT AREA - Starting near the top, overlapping header
     let yPos = 25;
 
-    // LEFT SIDE - Company Information (matching preview layout)
-    // Logo positioned on the left
-    this.addLogo(doc, config, 20, yPos, 45, 20);
+    // LEFT SIDE - Logo and Company Info SIDE BY SIDE like the preview
+    // Small logo positioned on the left
+    this.addLogo(doc, config, 20, yPos, 30, 15);
     
-    // Company name and subtitle
+    // Company name and subtitle positioned to the RIGHT of the logo
     doc.setTextColor(0, 0, 0);
-    doc.setFontSize(18);
+    doc.setFontSize(16);
     doc.setFont('helvetica', 'bold');
     const companyName = user.businessName || `${user.firstName || ''} ${user.lastName || ''}`;
-    doc.text(companyName, 20, yPos + 30);
+    doc.text(companyName, 55, yPos + 8);
     
-    doc.setFontSize(10);
+    doc.setFontSize(9);
     doc.setFont('helvetica', 'normal');
     doc.setTextColor(100, 100, 100);
-    doc.text('Professional Services', 20, yPos + 38);
+    doc.text('Professional Services', 55, yPos + 16);
     
-    // Company address and contact info
-    yPos += 48;
+    // Company address and contact info (moved down below logo/name)
+    yPos += 25;
     doc.setFontSize(9);
     doc.setTextColor(120, 120, 120);
     
