@@ -25,36 +25,36 @@ export class ClassicTemplate extends BaseTemplate {
     doc.line(20, 42, 90, 42);
 
     // Premium logo placement (traditional top-right with better sizing)
-    this.addLogo(doc, config, 135, 50, 55, 25);
+    this.addLogo(doc, config, 125, 55, 65, 30);
 
     // Traditional business letterhead with refined typography
     doc.setTextColor(0, 0, 0);
-    doc.setFontSize(config.fonts.title + 1);
+    doc.setFontSize(config.fonts.title + 4);
     doc.setFont('helvetica', 'bold');
     const companyName = user.businessName || `${user.firstName} ${user.lastName}`;
-    doc.text(companyName, 20, 55);
+    doc.text(companyName, 20, 60);
     
     // Elegant address and contact information
-    doc.setFontSize(config.fonts.small);
+    doc.setFontSize(config.fonts.body);
     doc.setFont('helvetica', 'normal');
     doc.setTextColor(60, 60, 60);
-    let yPos = 65;
+    let yPos = 72;
     
     if (user.businessAddress) {
       const addressLines = this.splitAddress(user.businessAddress);
       addressLines.forEach((line, index) => {
-        doc.text(line, 20, yPos + (index * 4));
+        doc.text(line, 20, yPos + (index * 6));
       });
-      yPos += addressLines.length * 4 + 4;
+      yPos += addressLines.length * 6 + 6;
     }
     
     if (user.email) {
       doc.text(`Email: ${user.email}`, 20, yPos);
-      yPos += 4;
+      yPos += 6;
     }
     if (user.businessPhone) {
       doc.text(`Phone: ${user.businessPhone}`, 20, yPos);
-      yPos += 4;
+      yPos += 6;
     }
     if (user.taxId) {
       doc.setTextColor(100, 100, 100);

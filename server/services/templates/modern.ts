@@ -19,34 +19,34 @@ export class ModernTemplate extends BaseTemplate {
     doc.rect(0, 25, 210, 3, 'F');
 
     // Premium logo placement with better sizing
-    this.addLogo(doc, config, 20, 45, 50, 25);
+    this.addLogo(doc, config, 20, 50, 60, 30);
 
     // Company info with professional typography
     doc.setTextColor(0, 0, 0);
-    doc.setFontSize(config.fonts.title + 2);
+    doc.setFontSize(config.fonts.title + 4);
     doc.setFont('helvetica', 'bold');
     const companyName = user.businessName || `${user.firstName} ${user.lastName}`;
-    doc.text(companyName, 80, 40);
+    doc.text(companyName, 90, 45);
     
     // Elegant company details
-    doc.setFontSize(config.fonts.small);
+    doc.setFontSize(config.fonts.body);
     doc.setFont('helvetica', 'normal');
     doc.setTextColor(80, 80, 80);
-    let yPos = 50;
+    let yPos = 58;
     
     if (user.businessAddress) {
       const addressLines = this.splitAddress(user.businessAddress);
       addressLines.forEach((line, index) => {
-        doc.text(line, 80, yPos + (index * 4));
+        doc.text(line, 90, yPos + (index * 6));
       });
-      yPos += addressLines.length * 4 + 4;
+      yPos += addressLines.length * 6 + 6;
     }
     
     if (user.email) {
-      doc.text(user.email, 80, yPos);
-      yPos += 4;
+      doc.text(user.email, 90, yPos);
+      yPos += 6;
     }
-    if (user.businessPhone) doc.text(user.businessPhone, 80, yPos);
+    if (user.businessPhone) doc.text(user.businessPhone, 90, yPos);
     if (user.taxId) {
       doc.setTextColor(120, 120, 120);
       doc.text(`Tax ID: ${user.taxId}`, 80, yPos + 4);
