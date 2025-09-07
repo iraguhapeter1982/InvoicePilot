@@ -11,9 +11,9 @@ export default function MetricsGrid() {
 
   if (isLoading) {
     return (
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
         {[...Array(4)].map((_, i) => (
-          <Card key={i}>
+          <Card key={i} className="modern-card">
             <CardContent className="p-6">
               <div className="animate-pulse">
                 <div className="flex items-center justify-between">
@@ -36,8 +36,8 @@ export default function MetricsGrid() {
   }
 
   return (
-    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-      <Card>
+    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+      <Card className="modern-card hover:shadow-xl transition-all duration-300">
         <CardContent className="p-6">
           <div className="flex items-center justify-between">
             <div>
@@ -46,8 +46,8 @@ export default function MetricsGrid() {
                 ${parseFloat(metrics?.monthlyTotal || '0').toFixed(2)}
               </p>
             </div>
-            <div className="w-10 h-10 bg-green-100 rounded-lg flex items-center justify-center">
-              <DollarSign className="h-5 w-5 text-green-600" />
+            <div className="w-12 h-12 bg-emerald-500/10 rounded-xl flex items-center justify-center">
+              <DollarSign className="h-6 w-6 text-emerald-600" />
             </div>
           </div>
           <div className="mt-4 flex items-center text-sm">
@@ -58,7 +58,7 @@ export default function MetricsGrid() {
         </CardContent>
       </Card>
       
-      <Card>
+      <Card className="modern-card hover:shadow-xl transition-all duration-300">
         <CardContent className="p-6">
           <div className="flex items-center justify-between">
             <div>
@@ -67,8 +67,8 @@ export default function MetricsGrid() {
                 ${parseFloat(metrics?.outstanding || '0').toFixed(2)}
               </p>
             </div>
-            <div className="w-10 h-10 bg-amber-100 rounded-lg flex items-center justify-center">
-              <Clock className="h-5 w-5 text-amber-600" />
+            <div className="w-12 h-12 bg-amber-500/10 rounded-xl flex items-center justify-center">
+              <Clock className="h-6 w-6 text-amber-600" />
             </div>
           </div>
           <div className="mt-4 flex items-center text-sm">
@@ -79,17 +79,17 @@ export default function MetricsGrid() {
         </CardContent>
       </Card>
       
-      <Card>
+      <Card className="modern-card hover:shadow-xl transition-all duration-300">
         <CardContent className="p-6">
           <div className="flex items-center justify-between">
             <div>
               <p className="text-sm font-medium text-muted-foreground">Overdue</p>
-              <p className="text-2xl font-bold text-destructive" data-testid="metric-overdue">
+              <p className="text-2xl font-bold text-red-600" data-testid="metric-overdue">
                 ${parseFloat(metrics?.overdue || '0').toFixed(2)}
               </p>
             </div>
-            <div className="w-10 h-10 bg-red-100 rounded-lg flex items-center justify-center">
-              <AlertTriangle className="h-5 w-5 text-red-600" />
+            <div className="w-12 h-12 bg-red-500/10 rounded-xl flex items-center justify-center">
+              <AlertTriangle className="h-6 w-6 text-red-600" />
             </div>
           </div>
           <div className="mt-4 flex items-center text-sm">
@@ -100,7 +100,7 @@ export default function MetricsGrid() {
         </CardContent>
       </Card>
       
-      <Card>
+      <Card className="modern-card hover:shadow-xl transition-all duration-300">
         <CardContent className="p-6">
           <div className="flex items-center justify-between">
             <div>
@@ -109,8 +109,8 @@ export default function MetricsGrid() {
                 {metrics?.totalClients || 0}
               </p>
             </div>
-            <div className="w-10 h-10 bg-blue-100 rounded-lg flex items-center justify-center">
-              <Users className="h-5 w-5 text-blue-600" />
+            <div className="w-12 h-12 bg-blue-500/10 rounded-xl flex items-center justify-center">
+              <Users className="h-6 w-6 text-blue-600" />
             </div>
           </div>
           <div className="mt-4 flex items-center text-sm">
