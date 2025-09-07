@@ -10,239 +10,288 @@ export class ClassicTemplate extends BaseTemplate {
     const secondaryRgb = this.hexToRgb(config.colors.secondary);
     const accentRgb = this.hexToRgb(config.colors.accent);
 
-    // Professional classic header with elegant styling
+    // Classic elegant header design
     doc.setTextColor(...primaryRgb);
-    doc.setFontSize(config.fonts.header + 4);
+    doc.setFontSize(36);
     doc.setFont('helvetica', 'bold');
     doc.text('INVOICE', 20, 35);
     
-    // Sophisticated underline with color gradient effect
+    // Elegant triple underline with color hierarchy
     doc.setLineWidth(3);
     doc.setDrawColor(...primaryRgb);
-    doc.line(20, 40, 90, 40);
-    doc.setLineWidth(1);
+    doc.line(20, 42, 100, 42);
+    doc.setLineWidth(2);
     doc.setDrawColor(...secondaryRgb);
-    doc.line(20, 42, 90, 42);
+    doc.line(20, 47, 90, 47);
+    doc.setLineWidth(1);
+    doc.setDrawColor(...accentRgb);
+    doc.line(20, 50, 80, 50);
 
-    // Premium logo placement (traditional top-right with better sizing)
-    this.addLogo(doc, config, 125, 55, 65, 30);
+    // Professional logo placement (traditional top-right)
+    this.addLogo(doc, config, 140, 25, 60, 35);
 
-    // Traditional business letterhead with refined typography
+    // Traditional company letterhead
+    let yPos = 65;
     doc.setTextColor(0, 0, 0);
-    doc.setFontSize(config.fonts.title + 4);
+    doc.setFontSize(20);
     doc.setFont('helvetica', 'bold');
-    const companyName = user.businessName || `${user.firstName} ${user.lastName}`;
-    doc.text(companyName, 20, 60);
+    const companyName = user.businessName || `${user.firstName || ''} ${user.lastName || ''}`;
+    doc.text(companyName, 20, yPos);
     
-    // Elegant address and contact information
-    doc.setFontSize(config.fonts.body);
+    // Elegant address section with proper spacing
+    yPos += 15;
+    doc.setFontSize(11);
     doc.setFont('helvetica', 'normal');
     doc.setTextColor(60, 60, 60);
-    let yPos = 72;
     
     if (user.businessAddress) {
       const addressLines = this.splitAddress(user.businessAddress);
       addressLines.forEach((line, index) => {
         doc.text(line, 20, yPos + (index * 6));
       });
-      yPos += addressLines.length * 6 + 6;
+      yPos += addressLines.length * 6 + 8;
     }
     
     if (user.email) {
       doc.text(`Email: ${user.email}`, 20, yPos);
-      yPos += 6;
+      yPos += 7;
     }
     if (user.businessPhone) {
       doc.text(`Phone: ${user.businessPhone}`, 20, yPos);
-      yPos += 6;
+      yPos += 7;
     }
     if (user.taxId) {
       doc.setTextColor(100, 100, 100);
       doc.text(`Tax ID: ${user.taxId}`, 20, yPos);
     }
 
-    // Professional invoice details with enhanced formatting
-    doc.setFillColor(248, 249, 250);
-    doc.roundedRect(135, 60, 60, 35, 2, 2, 'F');
-    doc.setDrawColor(220, 220, 220);
-    doc.setLineWidth(0.5);
-    doc.roundedRect(135, 60, 60, 35, 2, 2, 'S');
+    // Traditional invoice details box with elegant borders
+    doc.setFillColor(252, 252, 252);
+    doc.roundedRect(135, 65, 60, 50, 4, 4, 'F');
+    doc.setDrawColor(...primaryRgb);
+    doc.setLineWidth(2);
+    doc.roundedRect(135, 65, 60, 50, 4, 4, 'S');
     
-    doc.setTextColor(...secondaryRgb);
-    doc.setFontSize(config.fonts.small);
+    // Inner elegant border
+    doc.setDrawColor(...secondaryRgb);
+    doc.setLineWidth(0.5);
+    doc.roundedRect(137, 67, 56, 46, 3, 3, 'S');
+    
+    doc.setTextColor(...primaryRgb);
+    doc.setFontSize(12);
     doc.setFont('helvetica', 'bold');
-    doc.text('Invoice Details', 140, 70);
+    doc.text('Invoice Details', 140, 78);
     
     doc.setTextColor(60, 60, 60);
+    doc.setFontSize(10);
     doc.setFont('helvetica', 'normal');
-    doc.text(`Number: ${invoice.invoiceNumber}`, 140, 78);
-    doc.text(`Date: ${new Date(invoice.issueDate).toLocaleDateString()}`, 140, 84);
-    doc.text(`Due: ${new Date(invoice.dueDate).toLocaleDateString()}`, 140, 90);
+    doc.text(`Number: ${invoice.invoiceNumber}`, 140, 88);
+    doc.text(`Date: ${new Date(invoice.issueDate).toLocaleDateString()}`, 140, 96);
+    doc.setTextColor(...accentRgb);
+    doc.setFont('helvetica', 'bold');
+    doc.text(`Due: ${new Date(invoice.dueDate).toLocaleDateString()}`, 140, 104);
 
-    // Refined Bill To section with professional styling
-    yPos = 110;
-    doc.setTextColor(...secondaryRgb);
-    doc.setFontSize(config.fonts.body);
+    // Elegant Bill To section
+    yPos = 130;
+    doc.setTextColor(...primaryRgb);
+    doc.setFontSize(14);
     doc.setFont('helvetica', 'bold');
     doc.text('BILL TO:', 20, yPos);
     
-    // Enhanced underline with accent color
+    // Sophisticated underline
     doc.setLineWidth(2);
     doc.setDrawColor(...accentRgb);
-    doc.line(20, yPos + 3, 65, yPos + 3);
+    doc.line(20, yPos + 3, 75, yPos + 3);
+    doc.setLineWidth(1);
+    doc.setDrawColor(...secondaryRgb);
+    doc.line(20, yPos + 5, 70, yPos + 5);
     
+    // Client information with professional spacing
+    yPos += 15;
     doc.setTextColor(0, 0, 0);
-    doc.setFontSize(config.fonts.body);
+    doc.setFontSize(16);
     doc.setFont('helvetica', 'bold');
-    doc.text(invoice.client.name, 20, yPos + 15);
+    doc.text(invoice.client.name, 20, yPos);
     
-    doc.setFontSize(config.fonts.small);
+    yPos += 12;
+    doc.setFontSize(10);
     doc.setFont('helvetica', 'normal');
     doc.setTextColor(60, 60, 60);
-    yPos += 24;
     
     if (invoice.client.address) {
       const clientAddressLines = this.splitAddress(invoice.client.address);
       clientAddressLines.forEach((line, index) => {
-        doc.text(line, 20, yPos + (index * 4));
+        doc.text(line, 20, yPos + (index * 5));
       });
-      yPos += clientAddressLines.length * 4 + 4;
+      yPos += clientAddressLines.length * 5 + 6;
     }
     doc.text(invoice.client.email, 20, yPos);
-    if (invoice.client.phone) doc.text(invoice.client.phone, 20, yPos + 4);
+    if (invoice.client.phone) {
+      doc.text(invoice.client.phone, 20, yPos + 5);
+    }
 
-    // Enhanced classic table with refined borders and styling
-    yPos = 165;
+    // Traditional table with elegant styling
+    yPos = 185;
     
-    // Professional table header
+    // Professional table header with double border
     doc.setFillColor(...primaryRgb);
-    doc.rect(20, yPos, 170, 12, 'F');
+    doc.rect(20, yPos, 170, 16, 'F');
     doc.setDrawColor(...secondaryRgb);
-    doc.setLineWidth(0.5);
-    doc.rect(20, yPos, 170, 12, 'S');
+    doc.setLineWidth(1);
+    doc.rect(20, yPos, 170, 16, 'S');
+    
+    // Inner header line
+    doc.setDrawColor(255, 255, 255, 0.3);
+    doc.line(20, yPos + 8, 190, yPos + 8);
     
     doc.setTextColor(255, 255, 255);
-    doc.setFontSize(config.fonts.small);
+    doc.setFontSize(11);
     doc.setFont('helvetica', 'bold');
-    doc.text('Description', 25, yPos + 8);
-    doc.text('Qty', 115, yPos + 8, { align: 'center' });
-    doc.text('Rate', 135, yPos + 8, { align: 'center' });
-    doc.text('Amount', 165, yPos + 8, { align: 'right' });
+    doc.text('DESCRIPTION', 25, yPos + 11);
+    doc.text('QTY', 120, yPos + 11, { align: 'center' });
+    doc.text('RATE', 145, yPos + 11, { align: 'center' });
+    doc.text('AMOUNT', 180, yPos + 11, { align: 'right' });
 
-    // Enhanced vertical separators - adjusted to match column positions
+    // Vertical separators for traditional table look
     doc.setDrawColor(200, 200, 200);
-    doc.setLineWidth(0.3);
-    const tableHeight = 12 + (invoice.items.length * 10);
-    doc.line(110, yPos, 110, yPos + tableHeight);
-    doc.line(130, yPos, 130, yPos + tableHeight);
-    doc.line(150, yPos, 150, yPos + tableHeight);
+    doc.setLineWidth(0.5);
+    const tableHeight = 16 + (invoice.items.length * 14);
+    doc.line(115, yPos, 115, yPos + tableHeight);
+    doc.line(140, yPos, 140, yPos + tableHeight);
+    doc.line(165, yPos, 165, yPos + tableHeight);
 
-    // Items with professional styling
-    yPos += 12;
+    // Table items with traditional alternating rows
+    yPos += 16;
     doc.setFont('helvetica', 'normal');
     
     invoice.items.forEach((item, index) => {
-      // Subtle alternating backgrounds
+      // Traditional alternating row colors
       if (index % 2 === 1) {
-        doc.setFillColor(252, 252, 253);
-        doc.rect(20, yPos, 170, 10, 'F');
+        doc.setFillColor(248, 249, 250);
+        doc.rect(20, yPos, 170, 14, 'F');
       }
       
-      // Professional borders
-      doc.setDrawColor(235, 235, 235);
-      doc.setLineWidth(0.2);
-      doc.rect(20, yPos, 170, 10, 'S');
+      // Professional row borders
+      doc.setDrawColor(230, 230, 230);
+      doc.setLineWidth(0.3);
+      doc.rect(20, yPos, 170, 14, 'S');
       
       doc.setTextColor(0, 0, 0);
-      doc.setFontSize(config.fonts.small);
-      doc.text(item.description, 25, yPos + 7);
-      doc.text(item.quantity, 115, yPos + 7, { align: 'center' });
-      doc.text(this.formatCurrency(item.rate), 135, yPos + 7, { align: 'center' });
+      doc.setFontSize(10);
+      doc.text(item.description.length > 40 ? item.description.substring(0, 40) + '...' : item.description, 25, yPos + 9);
+      doc.text(item.quantity, 120, yPos + 9, { align: 'center' });
+      doc.text(this.formatCurrency(item.rate), 145, yPos + 9, { align: 'center' });
       
       doc.setFont('helvetica', 'bold');
-      doc.text(this.formatCurrency(item.amount), 165, yPos + 7, { align: 'right' });
+      doc.text(this.formatCurrency(item.amount), 180, yPos + 9, { align: 'right' });
       doc.setFont('helvetica', 'normal');
       
-      yPos += 10;
+      yPos += 14;
     });
 
-    // Professional totals section with enhanced styling
-    yPos += 15;
-    const totalsX = 115;
-    const totalsWidth = 75;
+    // Traditional totals section with elegant borders
+    yPos += 20;
+    const totalsX = 110;
+    const totalsWidth = 80;
     
-    // Border only to avoid background interference
-    doc.setDrawColor(225, 225, 225);
+    // Elegant totals container
+    doc.setFillColor(252, 252, 253);
+    doc.roundedRect(totalsX, yPos - 5, totalsWidth, 55, 4, 4, 'F');
+    doc.setDrawColor(...primaryRgb);
+    doc.setLineWidth(1.5);
+    doc.roundedRect(totalsX, yPos - 5, totalsWidth, 55, 4, 4, 'S');
+    doc.setDrawColor(...secondaryRgb);
     doc.setLineWidth(0.5);
-    doc.roundedRect(totalsX, yPos - 5, totalsWidth, 40, 2, 2, 'S');
+    doc.roundedRect(totalsX + 2, yPos - 3, totalsWidth - 4, 51, 3, 3, 'S');
     
     doc.setTextColor(60, 60, 60);
-    doc.setFontSize(config.fonts.small);
+    doc.setFontSize(11);
     doc.setFont('helvetica', 'normal');
     
-    // Subtotal with elegant lines
-    doc.text('Subtotal:', totalsX + 5, yPos + 5);
-    doc.text(this.formatCurrency(invoice.subtotal), totalsX + totalsWidth - 5, yPos + 5, { align: 'right' });
+    // Subtotal with elegant line
+    yPos += 8;
+    doc.text('Subtotal:', totalsX + 8, yPos);
+    doc.setFont('helvetica', 'bold');
+    doc.text(this.formatCurrency(invoice.subtotal), totalsX + totalsWidth - 8, yPos, { align: 'right' });
+    doc.setFont('helvetica', 'normal');
     doc.setDrawColor(200, 200, 200);
-    doc.setLineWidth(0.3);
-    doc.line(totalsX + 5, yPos + 7, totalsX + totalsWidth - 5, yPos + 7);
-    yPos += 10;
+    doc.setLineWidth(0.5);
+    doc.line(totalsX + 8, yPos + 3, totalsX + totalsWidth - 8, yPos + 3);
+    yPos += 12;
     
     // Tax
     if (invoice.taxAmount && parseFloat(invoice.taxAmount) > 0) {
-      doc.text(`Tax (${parseFloat(invoice.taxRate || '0').toFixed(1)}%):`, totalsX + 5, yPos);
-      doc.text(this.formatCurrency(invoice.taxAmount), totalsX + totalsWidth - 5, yPos, { align: 'right' });
-      doc.line(totalsX + 5, yPos + 2, totalsX + totalsWidth - 5, yPos + 2);
-      yPos += 8;
+      doc.text(`Tax (${invoice.taxRate ? parseFloat(invoice.taxRate).toFixed(1) : '0'}%):`, totalsX + 8, yPos);
+      doc.setFont('helvetica', 'bold');
+      doc.text(this.formatCurrency(invoice.taxAmount), totalsX + totalsWidth - 8, yPos, { align: 'right' });
+      doc.setFont('helvetica', 'normal');
+      doc.line(totalsX + 8, yPos + 3, totalsX + totalsWidth - 8, yPos + 3);
+      yPos += 12;
     }
     
-    // Discount with accent color
+    // Discount
     if (invoice.discountAmount && parseFloat(invoice.discountAmount) > 0) {
       doc.setTextColor(...accentRgb);
-      doc.text(`Discount (${parseFloat(invoice.discountRate || '0').toFixed(1)}%):`, totalsX + 5, yPos);
-      doc.text(`-${this.formatCurrency(invoice.discountAmount)}`, totalsX + totalsWidth - 5, yPos, { align: 'right' });
+      doc.text(`Discount (${invoice.discountRate ? parseFloat(invoice.discountRate).toFixed(1) : '0'}%):`, totalsX + 8, yPos);
+      doc.setFont('helvetica', 'bold');
+      doc.text(`-${this.formatCurrency(invoice.discountAmount)}`, totalsX + totalsWidth - 8, yPos, { align: 'right' });
+      doc.setFont('helvetica', 'normal');
       doc.setDrawColor(...accentRgb);
-      doc.line(totalsX + 5, yPos + 2, totalsX + totalsWidth - 5, yPos + 2);
-      yPos += 8;
+      doc.line(totalsX + 8, yPos + 3, totalsX + totalsWidth - 8, yPos + 3);
+      yPos += 12;
     }
 
-    // Total with classic styling and clear visibility
+    // Total with traditional double border
     doc.setFillColor(...primaryRgb);
-    doc.roundedRect(totalsX, yPos, totalsWidth, 12, 2, 2, 'F');
+    doc.roundedRect(totalsX, yPos, totalsWidth, 18, 3, 3, 'F');
+    doc.setDrawColor(...secondaryRgb);
+    doc.setLineWidth(1);
+    doc.roundedRect(totalsX, yPos, totalsWidth, 18, 3, 3, 'S');
+    
     doc.setTextColor(255, 255, 255);
-    doc.setFontSize(config.fonts.body + 1);
+    doc.setFontSize(14);
     doc.setFont('helvetica', 'bold');
-    doc.text('TOTAL:', totalsX + 5, yPos + 8);
-    doc.setFontSize(config.fonts.body + 2);
-    doc.text(this.formatCurrency(invoice.total), totalsX + totalsWidth - 5, yPos + 8, { align: 'right' });
+    doc.text('TOTAL:', totalsX + 8, yPos + 12);
+    doc.setFontSize(16);
+    doc.text(this.formatCurrency(invoice.total), totalsX + totalsWidth - 8, yPos + 12, { align: 'right' });
 
-    // Enhanced notes section with professional styling
+    // Traditional notes section
     if (invoice.notes) {
-      yPos += 25;
-      doc.setFillColor(252, 252, 253);
-      doc.roundedRect(20, yPos, 170, 30, 3, 3, 'F');
-      doc.setDrawColor(220, 220, 220);
+      yPos += 35;
+      doc.setFillColor(250, 251, 252);
+      doc.roundedRect(20, yPos, 170, 30, 5, 5, 'F');
+      doc.setDrawColor(...primaryRgb);
+      doc.setLineWidth(1);
+      doc.roundedRect(20, yPos, 170, 30, 5, 5, 'S');
+      doc.setDrawColor(...secondaryRgb);
       doc.setLineWidth(0.5);
-      doc.roundedRect(20, yPos, 170, 30, 3, 3, 'S');
+      doc.roundedRect(22, yPos + 2, 166, 26, 4, 4, 'S');
       
-      doc.setTextColor(...secondaryRgb);
-      doc.setFontSize(config.fonts.small + 1);
+      doc.setTextColor(...primaryRgb);
+      doc.setFontSize(12);
       doc.setFont('helvetica', 'bold');
-      doc.text('Notes:', 25, yPos + 10);
+      doc.text('NOTES:', 28, yPos + 14);
       
       doc.setTextColor(60, 60, 60);
-      doc.setFontSize(config.fonts.small);
+      doc.setFontSize(10);
       doc.setFont('helvetica', 'normal');
       
-      const noteLines = invoice.notes.split('\n').slice(0, 3);
+      const noteLines = invoice.notes.split('\n').slice(0, 2);
       noteLines.forEach((line, index) => {
-        doc.text(line, 25, yPos + 18 + (index * 4));
+        const truncatedLine = line.length > 70 ? line.substring(0, 70) + '...' : line;
+        doc.text(truncatedLine, 28, yPos + 21 + (index * 5));
       });
     }
 
-    // Professional footer
-    doc.setTextColor(150, 150, 150);
-    doc.setFontSize(8);
-    doc.text('Thank you for choosing our services', 105, 280, { align: 'center' });
+    // Traditional elegant footer
+    doc.setTextColor(120, 120, 120);
+    doc.setFontSize(10);
+    doc.setFont('helvetica', 'normal');
+    doc.text('Thank you for choosing our services', 105, 285, { align: 'center' });
+    
+    // Decorative footer line
+    doc.setDrawColor(...accentRgb);
+    doc.setLineWidth(1);
+    doc.line(80, 287, 130, 287);
   }
 }
