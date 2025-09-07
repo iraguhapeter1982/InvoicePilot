@@ -12,7 +12,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
-import { Palette, Upload, Eye, Save } from "lucide-react";
+import { Palette, Upload, Eye, Save, X } from "lucide-react";
 
 const brandingFormSchema = z.object({
   logoUrl: z.string().optional(),
@@ -126,6 +126,12 @@ export default function InvoiceBranding() {
     }
   };
 
+  const handleLogoRemove = () => {
+    setLogoFile(null);
+    setLogoPreview("");
+    form.setValue("logoUrl", "");
+  };
+
   const applyColorPreset = (preset: typeof colorPresets[0]) => {
     form.setValue("brandPrimaryColor", preset.primary);
     form.setValue("brandSecondaryColor", preset.secondary);
@@ -180,12 +186,25 @@ export default function InvoiceBranding() {
                   </div>
                 </div>
                 {logoPreview && (
-                  <div className="w-32 h-20 border rounded-lg flex items-center justify-center bg-white p-2">
-                    <img
-                      src={logoPreview}
-                      alt="Logo preview"
-                      className="max-w-full max-h-full object-contain"
-                    />
+                  <div className="w-32 space-y-2">
+                    <div className="w-32 h-20 border rounded-lg flex items-center justify-center bg-white p-2 relative">
+                      <img
+                        src={logoPreview}
+                        alt="Logo preview"
+                        className="max-w-full max-h-full object-contain"
+                      />
+                    </div>
+                    <Button
+                      type="button"
+                      variant="outline"
+                      size="sm"
+                      onClick={handleLogoRemove}
+                      className="w-full text-destructive hover:text-destructive"
+                      data-testid="button-remove-logo"
+                    >
+                      <X className="h-4 w-4 mr-1" />
+                      Remove
+                    </Button>
                   </div>
                 )}
               </div>
