@@ -18,10 +18,10 @@ export async function generateInvoicePDF(invoice: InvoiceWithDetails, user: User
     },
     logo: (user as any).logoUrl,
     fonts: {
-      header: 20,
-      title: 14,
-      body: 12,
-      small: 10,
+      header: 28,
+      title: 18,
+      body: 14,
+      small: 12,
     }
   };
   
