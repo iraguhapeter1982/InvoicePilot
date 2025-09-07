@@ -8,13 +8,14 @@ import Stripe from "stripe";
 import { generateInvoicePDF } from "./services/pdf";
 import { sendInvoiceEmail } from "./services/email";
 
-if (!process.env.STRIPE_SECRET_KEY) {
-  throw new Error('Missing required Stripe secret: STRIPE_SECRET_KEY');
-}
+let stripe: Stripe | null = null;
 
-const stripe = new Stripe(process.env.STRIPE_SECRET_KEY, {
-  apiVersion: "2024-11-20.acacia",
-});
+// Initialize Stripe only if API key is available
+if (process.env.STRIPE_SECRET_KEY) {
+  stripe = new Stripe(process.env.STRIPE_SECRET_KEY, {
+    apiVersion: "2024-11-20.acacia",
+  });
+}
 
 export async function registerRoutes(app: Express): Promise<Server> {
   // Auth middleware
@@ -259,6 +260,10 @@ export async function registerRoutes(app: Express): Promise<Server> {
   // Stripe payment routes
   app.post("/api/create-payment-intent", isAuthenticated, async (req: any, res) => {
     try {
+      if (!stripe) {
+        return res.status(503).json({ message: "Payment processing not configured - Stripe API key not set" });
+      }
+
       const { invoiceId } = req.body;
       const userId = req.user.claims.sub;
       
@@ -292,6 +297,11 @@ export async function registerRoutes(app: Express): Promise<Server> {
 
   // Stripe webhook
   app.post('/api/stripe/webhook', async (req, res) => {
+    if (!stripe) {
+      console.warn('Stripe webhook received but Stripe not configured');
+      return res.status(503).json({ message: "Payment processing not configured" });
+    }
+
     const sig = req.headers['stripe-signature'] as string;
     let event;
 
