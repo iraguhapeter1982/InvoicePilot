@@ -84,13 +84,13 @@ export class MinimalTemplate extends BaseTemplate {
     doc.setTextColor(120, 120, 120);
     doc.setFontSize(config.fonts.small);
     
-    if (parseFloat(invoice.taxAmount) > 0) {
+    if (invoice.taxAmount && parseFloat(invoice.taxAmount) > 0) {
       doc.text('Tax:', 140, yPos);
       doc.text(this.formatCurrency(invoice.taxAmount), 170, yPos);
       yPos += 8;
     }
     
-    if (parseFloat(invoice.discountAmount) > 0) {
+    if (invoice.discountAmount && parseFloat(invoice.discountAmount) > 0) {
       doc.text('Discount:', 140, yPos);
       doc.text(`-${this.formatCurrency(invoice.discountAmount)}`, 170, yPos);
       yPos += 8;

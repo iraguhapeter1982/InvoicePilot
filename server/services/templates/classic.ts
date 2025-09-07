@@ -122,15 +122,15 @@ export class ClassicTemplate extends BaseTemplate {
     doc.line(totalsX, yPos + 2, 190, yPos + 2);
     yPos += 10;
     
-    if (parseFloat(invoice.taxAmount) > 0) {
-      doc.text(`Tax (${parseFloat(invoice.taxRate).toFixed(1)}%):`, totalsX, yPos);
+    if (invoice.taxAmount && parseFloat(invoice.taxAmount) > 0) {
+      doc.text(`Tax (${parseFloat(invoice.taxRate || '0').toFixed(1)}%):`, totalsX, yPos);
       doc.text(this.formatCurrency(invoice.taxAmount), 175, yPos, { align: 'right' });
       doc.line(totalsX, yPos + 2, 190, yPos + 2);
       yPos += 10;
     }
     
-    if (parseFloat(invoice.discountAmount) > 0) {
-      doc.text(`Discount (${parseFloat(invoice.discountRate).toFixed(1)}%):`, totalsX, yPos);
+    if (invoice.discountAmount && parseFloat(invoice.discountAmount) > 0) {
+      doc.text(`Discount (${parseFloat(invoice.discountRate || '0').toFixed(1)}%):`, totalsX, yPos);
       doc.text(`-${this.formatCurrency(invoice.discountAmount)}`, 175, yPos, { align: 'right' });
       doc.line(totalsX, yPos + 2, 190, yPos + 2);
       yPos += 10;
