@@ -10,16 +10,16 @@ export class ModernTemplate extends BaseTemplate {
     const secondaryRgb = this.hexToRgb(config.colors.secondary);
     const accentRgb = this.hexToRgb(config.colors.accent);
 
-    // GRADIENT HEADER BAND - Just like the preview
+    // SMALL ORANGE HEADER BAND - Thin like the preview
     doc.setFillColor(...primaryRgb);
-    doc.rect(0, 0, 210, 35, 'F');
+    doc.rect(0, 0, 210, 8, 'F');
     
     // Add gradient effect by overlaying a slightly different color
-    doc.setFillColor(primaryRgb[0] + 20, primaryRgb[1] + 10, primaryRgb[2] - 10);
-    doc.rect(0, 0, 210, 2, 'F');
+    doc.setFillColor(primaryRgb[0] + 15, primaryRgb[1] + 10, primaryRgb[2] - 5);
+    doc.rect(0, 0, 210, 1, 'F');
 
-    // MAIN CONTENT AREA - Starting after header
-    let yPos = 50;
+    // MAIN CONTENT AREA - Starting near the top, overlapping header
+    let yPos = 25;
 
     // LEFT SIDE - Company Information (matching preview layout)
     // Logo positioned on the left
@@ -66,35 +66,35 @@ export class ModernTemplate extends BaseTemplate {
     doc.setTextColor(...primaryRgb);
     doc.setFontSize(24);
     doc.setFont('helvetica', 'bold');
-    doc.text('INVOICE', 190, 70, { align: 'right' });
+    doc.text('INVOICE', 190, 45, { align: 'right' });
 
     // Invoice details card-like area
     doc.setFillColor(250, 250, 250);
-    doc.roundedRect(140, 75, 55, 35, 3, 3, 'F');
+    doc.roundedRect(140, 50, 55, 35, 3, 3, 'F');
     doc.setDrawColor(230, 230, 230);
     doc.setLineWidth(0.3);
-    doc.roundedRect(140, 75, 55, 35, 3, 3, 'S');
+    doc.roundedRect(140, 50, 55, 35, 3, 3, 'S');
 
     doc.setTextColor(0, 0, 0);
     doc.setFontSize(9);
     doc.setFont('helvetica', 'normal');
-    doc.text('Invoice #:', 145, 85);
+    doc.text('Invoice #:', 145, 60);
     doc.setFont('helvetica', 'bold');
-    doc.text(`${invoice.invoiceNumber}`, 190, 85, { align: 'right' });
+    doc.text(`${invoice.invoiceNumber}`, 190, 60, { align: 'right' });
 
     doc.setFont('helvetica', 'normal');
-    doc.text('Date:', 145, 92);
+    doc.text('Date:', 145, 67);
     doc.setFont('helvetica', 'bold');
-    doc.text(new Date(invoice.issueDate).toLocaleDateString(), 190, 92, { align: 'right' });
+    doc.text(new Date(invoice.issueDate).toLocaleDateString(), 190, 67, { align: 'right' });
 
     doc.setFont('helvetica', 'normal');
-    doc.text('Due Date:', 145, 99);
+    doc.text('Due Date:', 145, 74);
     doc.setFont('helvetica', 'bold');
     doc.setTextColor(...accentRgb);
-    doc.text(new Date(invoice.dueDate).toLocaleDateString(), 190, 99, { align: 'right' });
+    doc.text(new Date(invoice.dueDate).toLocaleDateString(), 190, 74, { align: 'right' });
 
-    // BILL TO SECTION (matching preview with green accent)
-    yPos = 125;
+    // BILL TO SECTION (positioned higher)
+    yPos = 100;
     doc.setTextColor(...secondaryRgb);
     doc.setFontSize(11);
     doc.setFont('helvetica', 'bold');
@@ -130,8 +130,8 @@ export class ModernTemplate extends BaseTemplate {
       doc.text(invoice.client.phone, 20, yPos);
     }
 
-    // TABLE SECTION (matching preview design)
-    yPos = 165;
+    // TABLE SECTION (positioned higher)
+    yPos = 140;
     
     // Table header with orange background matching the preview
     doc.setFillColor(...primaryRgb);
