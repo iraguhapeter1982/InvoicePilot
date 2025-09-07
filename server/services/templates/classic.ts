@@ -145,25 +145,18 @@ export class ClassicTemplate extends BaseTemplate {
     doc.line(totalsX, yPos + 2, 190, yPos + 2);
     doc.line(totalsX, yPos + 4, 190, yPos + 4);
 
-    // Payment terms in box
-    if (invoice.paymentTerms || invoice.notes) {
+    // Notes section in box
+    if (invoice.notes) {
       yPos += 20;
       doc.setTextColor(0, 0, 0);
       doc.setFontSize(config.fonts.small);
-      doc.rect(20, yPos, 170, 30);
+      doc.rect(20, yPos, 170, 25);
       
-      if (invoice.paymentTerms) {
-        doc.text('Payment Terms:', 25, yPos + 8);
-        doc.text(invoice.paymentTerms, 25, yPos + 15);
-      }
-      
-      if (invoice.notes) {
-        doc.text('Notes:', 25, yPos + 22);
-        const noteLines = invoice.notes.split('\n').slice(0, 2); // Limit lines in classic template
-        noteLines.forEach((line, index) => {
-          doc.text(line, 25, yPos + 29 + (index * 5));
-        });
-      }
+      doc.text('Notes:', 25, yPos + 8);
+      const noteLines = invoice.notes.split('\n').slice(0, 3); // Limit lines in classic template
+      noteLines.forEach((line, index) => {
+        doc.text(line, 25, yPos + 15 + (index * 5));
+      });
     }
   }
 }
