@@ -1,18 +1,25 @@
 import { MailService } from '@sendgrid/mail';
 import { type InvoiceWithDetails, type User } from "@shared/schema";
 
-if (!process.env.SENDGRID_API_KEY) {
-  throw new Error("SENDGRID_API_KEY environment variable must be set");
-}
+let mailService: MailService | null = null;
 
-const mailService = new MailService();
-mailService.setApiKey(process.env.SENDGRID_API_KEY);
+// Initialize email service only if API key is available
+if (process.env.SENDGRID_API_KEY) {
+  mailService = new MailService();
+  mailService.setApiKey(process.env.SENDGRID_API_KEY);
+}
 
 export async function sendInvoiceEmail(
   invoice: InvoiceWithDetails,
   user: User,
   pdfBuffer: Buffer
 ): Promise<boolean> {
+  // Check if email service is configured
+  if (!mailService) {
+    console.warn('Email service not configured - SENDGRID_API_KEY not set. Invoice will be marked as sent but email will not be delivered.');
+    return false;
+  }
+
   try {
     const domains = process.env.REPLIT_DOMAINS?.split(',') || [];
     const domain = domains[0] || 'localhost:5000';
