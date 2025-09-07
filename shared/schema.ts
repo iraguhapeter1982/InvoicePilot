@@ -139,6 +139,9 @@ export const insertInvoiceSchema = createInsertSchema(invoices).omit({
   id: true,
   createdAt: true,
   updatedAt: true,
+}).extend({
+  issueDate: z.string().or(z.date()).transform((val) => typeof val === 'string' ? new Date(val) : val),
+  dueDate: z.string().or(z.date()).transform((val) => typeof val === 'string' ? new Date(val) : val),
 });
 
 export const insertInvoiceItemSchema = createInsertSchema(invoiceItems).omit({

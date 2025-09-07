@@ -15,7 +15,7 @@ import {
   type DashboardMetrics,
 } from "@shared/schema";
 import { db } from "./db";
-import { eq, and, desc, sql, gte, lte } from "drizzle-orm";
+import { eq, and, desc, sql, gte, lte, inArray } from "drizzle-orm";
 
 export interface IStorage {
   // User operations
@@ -123,10 +123,13 @@ export class DatabaseStorage implements IStorage {
       .orderBy(desc(invoices.createdAt));
 
     const invoiceIds = result.map(r => r.invoice.id);
-    const items = await db
-      .select()
-      .from(invoiceItems)
-      .where(sql`${invoiceItems.invoiceId} = ANY(${invoiceIds})`);
+    let items: InvoiceItem[] = [];
+    if (invoiceIds.length > 0) {
+      items = await db
+        .select()
+        .from(invoiceItems)
+        .where(inArray(invoiceItems.invoiceId, invoiceIds));
+    }
 
     return result.map(r => ({
       ...r.invoice,
