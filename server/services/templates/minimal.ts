@@ -83,14 +83,14 @@ export class MinimalTemplate extends BaseTemplate {
     doc.setFontSize(config.fonts.body);
     doc.setFont('helvetica', 'bold');
     doc.text('Description', 20, yPos);
-    doc.text('Qty', 130, yPos, { align: 'center' });
-    doc.text('Rate', 150, yPos, { align: 'center' });
-    doc.text('Amount', 180, yPos, { align: 'right' });
+    doc.text('Qty', 120, yPos, { align: 'center' });
+    doc.text('Rate', 140, yPos, { align: 'center' });
+    doc.text('Amount', 165, yPos, { align: 'right' });
 
     // Refined separator with accent color
     doc.setDrawColor(...accentRgb);
     doc.setLineWidth(1);
-    doc.line(20, yPos + 6, 180, yPos + 6);
+    doc.line(20, yPos + 6, 170, yPos + 6);
 
     // Items with perfect minimal spacing
     yPos += 20;
@@ -100,12 +100,12 @@ export class MinimalTemplate extends BaseTemplate {
     invoice.items.forEach((item, index) => {
       doc.setFontSize(config.fonts.body);
       doc.text(item.description, 20, yPos);
-      doc.text(item.quantity, 130, yPos, { align: 'center' });
-      doc.text(this.formatCurrency(item.rate), 150, yPos, { align: 'center' });
+      doc.text(item.quantity, 120, yPos, { align: 'center' });
+      doc.text(this.formatCurrency(item.rate), 140, yPos, { align: 'center' });
       
       // Emphasize amounts
       doc.setFont('helvetica', 'bold');
-      doc.text(this.formatCurrency(item.amount), 180, yPos, { align: 'right' });
+      doc.text(this.formatCurrency(item.amount), 165, yPos, { align: 'right' });
       doc.setFont('helvetica', 'normal');
       
       yPos += 16;
@@ -114,35 +114,35 @@ export class MinimalTemplate extends BaseTemplate {
     // Elegant totals section - minimal but impactful
     yPos += 20;
     
-    // Subtle background for totals
-    doc.setFillColor(248, 249, 250);
-    doc.roundedRect(115, yPos - 10, 75, 40, 3, 3, 'F');
+    // Remove problematic background that might hide text
+    // doc.setFillColor(248, 249, 250);
+    // doc.roundedRect(115, yPos - 10, 75, 40, 3, 3, 'F');
     
     doc.setTextColor(80, 80, 80);
     doc.setFontSize(config.fonts.body);
     
     if (invoice.taxAmount && parseFloat(invoice.taxAmount) > 0) {
-      doc.text('Tax:', 120, yPos);
-      doc.text(this.formatCurrency(invoice.taxAmount), 185, yPos, { align: 'right' });
+      doc.text('Tax:', 130, yPos);
+      doc.text(this.formatCurrency(invoice.taxAmount), 175, yPos, { align: 'right' });
       yPos += 10;
     }
     
     if (invoice.discountAmount && parseFloat(invoice.discountAmount) > 0) {
       doc.setTextColor(...accentRgb);
-      doc.text('Discount:', 120, yPos);
-      doc.text(`-${this.formatCurrency(invoice.discountAmount)}`, 185, yPos, { align: 'right' });
+      doc.text('Discount:', 130, yPos);
+      doc.text(`-${this.formatCurrency(invoice.discountAmount)}`, 175, yPos, { align: 'right' });
       yPos += 10;
     }
 
-    // Total with sophisticated styling
+    // Total with clear visibility - no background interference
     yPos += 8;
     doc.setTextColor(...primaryRgb);
     doc.setFontSize(config.fonts.body + 2);
     doc.setFont('helvetica', 'bold');
-    doc.text('Total', 120, yPos);
-    doc.setTextColor(...accentRgb);
+    doc.text('Total', 130, yPos);
+    doc.setTextColor(0, 0, 0); // Use black for total to ensure visibility
     doc.setFontSize(config.fonts.title + 2);
-    doc.text(this.formatCurrency(invoice.total), 185, yPos, { align: 'right' });
+    doc.text(this.formatCurrency(invoice.total), 175, yPos, { align: 'right' });
 
     // Minimal notes with perfect typography
     if (invoice.notes) {

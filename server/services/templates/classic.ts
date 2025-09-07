@@ -125,17 +125,17 @@ export class ClassicTemplate extends BaseTemplate {
     doc.setFontSize(config.fonts.small);
     doc.setFont('helvetica', 'bold');
     doc.text('Description', 25, yPos + 8);
-    doc.text('Qty', 120, yPos + 8, { align: 'center' });
-    doc.text('Rate', 140, yPos + 8, { align: 'center' });
-    doc.text('Amount', 175, yPos + 8, { align: 'right' });
+    doc.text('Qty', 115, yPos + 8, { align: 'center' });
+    doc.text('Rate', 135, yPos + 8, { align: 'center' });
+    doc.text('Amount', 165, yPos + 8, { align: 'right' });
 
-    // Enhanced vertical separators
+    // Enhanced vertical separators - adjusted to match column positions
     doc.setDrawColor(200, 200, 200);
     doc.setLineWidth(0.3);
     const tableHeight = 12 + (invoice.items.length * 10);
-    doc.line(115, yPos, 115, yPos + tableHeight);
-    doc.line(135, yPos, 135, yPos + tableHeight);
-    doc.line(155, yPos, 155, yPos + tableHeight);
+    doc.line(110, yPos, 110, yPos + tableHeight);
+    doc.line(130, yPos, 130, yPos + tableHeight);
+    doc.line(150, yPos, 150, yPos + tableHeight);
 
     // Items with professional styling
     yPos += 12;
@@ -156,11 +156,11 @@ export class ClassicTemplate extends BaseTemplate {
       doc.setTextColor(0, 0, 0);
       doc.setFontSize(config.fonts.small);
       doc.text(item.description, 25, yPos + 7);
-      doc.text(item.quantity, 120, yPos + 7, { align: 'center' });
-      doc.text(this.formatCurrency(item.rate), 140, yPos + 7, { align: 'center' });
+      doc.text(item.quantity, 115, yPos + 7, { align: 'center' });
+      doc.text(this.formatCurrency(item.rate), 135, yPos + 7, { align: 'center' });
       
       doc.setFont('helvetica', 'bold');
-      doc.text(this.formatCurrency(item.amount), 175, yPos + 7, { align: 'right' });
+      doc.text(this.formatCurrency(item.amount), 165, yPos + 7, { align: 'right' });
       doc.setFont('helvetica', 'normal');
       
       yPos += 10;
@@ -171,9 +171,7 @@ export class ClassicTemplate extends BaseTemplate {
     const totalsX = 115;
     const totalsWidth = 75;
     
-    // Totals background with subtle styling
-    doc.setFillColor(250, 250, 251);
-    doc.roundedRect(totalsX, yPos - 5, totalsWidth, 40, 2, 2, 'F');
+    // Border only to avoid background interference
     doc.setDrawColor(225, 225, 225);
     doc.setLineWidth(0.5);
     doc.roundedRect(totalsX, yPos - 5, totalsWidth, 40, 2, 2, 'S');
@@ -208,13 +206,14 @@ export class ClassicTemplate extends BaseTemplate {
       yPos += 8;
     }
 
-    // Total with classic double underline styling
+    // Total with classic styling and clear visibility
     doc.setFillColor(...primaryRgb);
     doc.roundedRect(totalsX, yPos, totalsWidth, 12, 2, 2, 'F');
     doc.setTextColor(255, 255, 255);
-    doc.setFontSize(config.fonts.body);
+    doc.setFontSize(config.fonts.body + 1);
     doc.setFont('helvetica', 'bold');
     doc.text('TOTAL:', totalsX + 5, yPos + 8);
+    doc.setFontSize(config.fonts.body + 2);
     doc.text(this.formatCurrency(invoice.total), totalsX + totalsWidth - 5, yPos + 8, { align: 'right' });
 
     // Enhanced notes section with professional styling

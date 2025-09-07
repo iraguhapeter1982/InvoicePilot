@@ -114,9 +114,9 @@ export class ModernTemplate extends BaseTemplate {
     doc.setFontSize(config.fonts.small);
     doc.setFont('helvetica', 'bold');
     doc.text('DESCRIPTION', 25, yPos + 8);
-    doc.text('QTY', 120, yPos + 8, { align: 'center' });
-    doc.text('RATE', 140, yPos + 8, { align: 'center' });
-    doc.text('AMOUNT', 175, yPos + 8, { align: 'right' });
+    doc.text('QTY', 115, yPos + 8, { align: 'center' });
+    doc.text('RATE', 135, yPos + 8, { align: 'center' });
+    doc.text('AMOUNT', 165, yPos + 8, { align: 'right' });
 
     // Items with premium styling
     yPos += 15;
@@ -132,11 +132,11 @@ export class ModernTemplate extends BaseTemplate {
       doc.setTextColor(0, 0, 0);
       doc.setFontSize(config.fonts.small);
       doc.text(item.description, 25, yPos + 2);
-      doc.text(item.quantity, 120, yPos + 2, { align: 'center' });
-      doc.text(this.formatCurrency(item.rate), 140, yPos + 2, { align: 'center' });
+      doc.text(item.quantity, 115, yPos + 2, { align: 'center' });
+      doc.text(this.formatCurrency(item.rate), 135, yPos + 2, { align: 'center' });
       
       doc.setFont('helvetica', 'bold');
-      doc.text(this.formatCurrency(item.amount), 175, yPos + 2, { align: 'right' });
+      doc.text(this.formatCurrency(item.amount), 165, yPos + 2, { align: 'right' });
       doc.setFont('helvetica', 'normal');
       
       yPos += 12;
@@ -147,9 +147,8 @@ export class ModernTemplate extends BaseTemplate {
     const totalsX = 110;
     const totalsWidth = 80;
     
-    // Totals background card
-    doc.setFillColor(252, 252, 253);
-    doc.roundedRect(totalsX, yPos - 5, totalsWidth, 35, 3, 3, 'F');
+    // Remove background to prevent text visibility issues
+    // Light border only
     doc.setDrawColor(235, 235, 235);
     doc.setLineWidth(0.5);
     doc.roundedRect(totalsX, yPos - 5, totalsWidth, 35, 3, 3, 'S');
@@ -178,13 +177,14 @@ export class ModernTemplate extends BaseTemplate {
       yPos += 7;
     }
 
-    // Total with premium styling
+    // Total with clear visibility
     doc.setFillColor(...accentRgb);
     doc.roundedRect(totalsX, yPos, totalsWidth, 12, 2, 2, 'F');
     doc.setTextColor(255, 255, 255);
-    doc.setFontSize(config.fonts.body);
+    doc.setFontSize(config.fonts.body + 1);
     doc.setFont('helvetica', 'bold');
     doc.text('TOTAL:', totalsX + 5, yPos + 8);
+    doc.setFontSize(config.fonts.body + 2);
     doc.text(this.formatCurrency(invoice.total), totalsX + totalsWidth - 5, yPos + 8, { align: 'right' });
 
     // Notes section with modern styling
