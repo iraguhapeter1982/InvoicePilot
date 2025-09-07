@@ -37,6 +37,10 @@ export const users = pgTable("users", {
   businessPhone: varchar("business_phone"),
   taxId: varchar("tax_id"),
   logoUrl: varchar("logo_url"),
+  brandPrimaryColor: varchar("brand_primary_color").default("#3b82f6"),
+  brandSecondaryColor: varchar("brand_secondary_color").default("#1e40af"),
+  brandAccentColor: varchar("brand_accent_color").default("#10b981"),
+  invoiceTemplate: varchar("invoice_template").default("modern"), // modern, classic, minimal
   stripeCustomerId: varchar("stripe_customer_id"),
   stripeSubscriptionId: varchar("stripe_subscription_id"),
   createdAt: timestamp("created_at").defaultNow(),
