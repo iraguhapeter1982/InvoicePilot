@@ -6,6 +6,7 @@ import crypto from "crypto";
 import type { Express, Request, Response, NextFunction } from "express";
 import connectPg from "connect-pg-simple";
 import { storage } from "./storage";
+import { sendPasswordResetEmail } from "./services/email";
 import { z } from "zod";
 
 // Session configuration
@@ -200,9 +201,15 @@ export async function setupAuth(app: Express) {
       // Save reset token to database
       await storage.updateUserResetToken(user.id, resetToken, resetTokenExpiry);
 
-      // In a real app, you would send an email here
-      // For development, we'll return the token (remove in production)
-      console.log(`Password reset token for ${email}: ${resetToken}`);
+      // Send password reset email
+      const userName = user.firstName || user.email.split('@')[0];
+      const emailSent = await sendPasswordResetEmail(email, resetToken, userName);
+      
+      if (emailSent) {
+        console.log(`Password reset email sent successfully to ${email}`);
+      } else {
+        console.log(`Password reset token for ${email}: ${resetToken}`);
+      }
       
       res.json({ 
         message: 'If an account with that email exists, a password reset link has been sent.',

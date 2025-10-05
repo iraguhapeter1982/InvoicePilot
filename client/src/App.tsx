@@ -9,6 +9,7 @@ import Dashboard from "@/pages/dashboard";
 import Invoices from "@/pages/invoices";
 import Clients from "@/pages/clients";
 import Settings from "@/pages/settings";
+import ResetPassword from "@/pages/reset-password";
 
 function Router() {
   const { isAuthenticated, isLoading } = useAuth();
@@ -24,6 +25,7 @@ function Router() {
   return (
     <Switch>
       <Route path="/" component={!isAuthenticated ? Landing : Dashboard} />
+      <Route path="/reset-password" component={ResetPassword} />
       {isAuthenticated && (
         <>
           <Route path="/invoices" component={Invoices} />
