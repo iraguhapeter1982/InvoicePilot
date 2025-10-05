@@ -44,6 +44,8 @@ export const users = pgTable("users", {
   invoiceTemplate: varchar("invoice_template").default("modern"), // modern, classic, minimal
   stripeCustomerId: varchar("stripe_customer_id"),
   stripeSubscriptionId: varchar("stripe_subscription_id"),
+  resetPasswordToken: varchar("reset_password_token"),
+  resetPasswordTokenExpiry: timestamp("reset_password_token_expiry"),
   createdAt: timestamp("created_at").defaultNow(),
   updatedAt: timestamp("updated_at").defaultNow(),
 });
