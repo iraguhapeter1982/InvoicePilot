@@ -319,23 +319,28 @@ export default function Clients() {
 
         {/* Client Form Modal */}
         <Dialog open={showForm} onOpenChange={handleCloseForm}>
-          <DialogContent className="max-w-md m-4">
-            <DialogHeader>
-              <DialogTitle>
+          <DialogContent className="max-w-md mx-2 sm:mx-4 max-h-[90vh] overflow-y-auto">
+            <DialogHeader className="space-y-2">
+              <DialogTitle className="text-lg sm:text-xl">
                 {editingClient ? "Edit Client" : "Add New Client"}
               </DialogTitle>
             </DialogHeader>
             
             <Form {...form}>
-              <form onSubmit={form.handleSubmit(handleSubmit)} className="space-y-4">
+              <form onSubmit={form.handleSubmit(handleSubmit)} className="space-y-4 mt-4">
                 <FormField
                   control={form.control}
                   name="name"
                   render={({ field }) => (
                     <FormItem>
-                      <FormLabel>Name *</FormLabel>
+                      <FormLabel className="text-sm font-medium">Name *</FormLabel>
                       <FormControl>
-                        <Input {...field} placeholder="Client name" data-testid="input-client-name" />
+                        <Input 
+                          {...field} 
+                          placeholder="Client name" 
+                          data-testid="input-client-name"
+                          className="h-10"
+                        />
                       </FormControl>
                       <FormMessage />
                     </FormItem>
@@ -347,9 +352,15 @@ export default function Clients() {
                   name="email"
                   render={({ field }) => (
                     <FormItem>
-                      <FormLabel>Email *</FormLabel>
+                      <FormLabel className="text-sm font-medium">Email *</FormLabel>
                       <FormControl>
-                        <Input type="email" {...field} placeholder="client@example.com" data-testid="input-client-email" />
+                        <Input 
+                          type="email" 
+                          {...field} 
+                          placeholder="client@example.com" 
+                          data-testid="input-client-email"
+                          className="h-10"
+                        />
                       </FormControl>
                       <FormMessage />
                     </FormItem>
@@ -361,9 +372,14 @@ export default function Clients() {
                   name="phone"
                   render={({ field }) => (
                     <FormItem>
-                      <FormLabel>Phone</FormLabel>
+                      <FormLabel className="text-sm font-medium">Phone</FormLabel>
                       <FormControl>
-                        <Input {...field} placeholder="(555) 123-4567" data-testid="input-client-phone" />
+                        <Input 
+                          {...field} 
+                          placeholder="(555) 123-4567" 
+                          data-testid="input-client-phone"
+                          className="h-10"
+                        />
                       </FormControl>
                       <FormMessage />
                     </FormItem>
@@ -375,13 +391,14 @@ export default function Clients() {
                   name="address"
                   render={({ field }) => (
                     <FormItem>
-                      <FormLabel>Address</FormLabel>
+                      <FormLabel className="text-sm font-medium">Address</FormLabel>
                       <FormControl>
                         <Textarea 
                           {...field} 
                           placeholder="Street address, city, state, zip"
                           rows={3}
-                          data-testid="input-client-address" 
+                          data-testid="input-client-address"
+                          className="resize-none"
                         />
                       </FormControl>
                       <FormMessage />
@@ -389,14 +406,20 @@ export default function Clients() {
                   )}
                 />
 
-                <div className="flex justify-end space-x-4 pt-4">
-                  <Button type="button" variant="outline" onClick={handleCloseForm} data-testid="button-cancel-client">
+                <div className="flex flex-col-reverse sm:flex-row sm:justify-end gap-3 pt-6 border-t">
+                  <Button 
+                    type="button" 
+                    variant="outline" 
+                    onClick={handleCloseForm} 
+                    data-testid="button-cancel-client"
+                    className="w-full sm:w-auto"
+                  >
                     Cancel
                   </Button>
                   <Button 
                     type="submit" 
                     disabled={createClientMutation.isPending || updateClientMutation.isPending}
-                    className="btn-gradient"
+                    className="btn-gradient w-full sm:w-auto"
                     data-testid="button-save-client"
                   >
                     {editingClient ? "Update Client" : "Create Client"}
