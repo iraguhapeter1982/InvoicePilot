@@ -1,11 +1,20 @@
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Receipt, Users, CreditCard, Mail, Download, BarChart3, ArrowRight, Sparkles, CheckCircle } from "lucide-react";
+import AuthForm from "@/components/auth-form";
+import { useState } from "react";
+import { queryClient } from "@/lib/queryClient";
 
 export default function Landing() {
+  const [showAuthForm, setShowAuthForm] = useState(false);
+
   const handleLogin = () => {
-    window.location.href = "/api/login";
+    setShowAuthForm(true);
   };
+
+  if (showAuthForm) {
+    return <AuthForm />;
+  }
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-background via-background to-muted/20">

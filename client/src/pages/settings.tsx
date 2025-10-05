@@ -44,11 +44,11 @@ export default function Settings() {
     if (!isLoading && !isAuthenticated) {
       toast({
         title: "Unauthorized",
-        description: "You are logged out. Logging in again...",
+        description: "You are logged out. Please log in again.",
         variant: "destructive",
       });
       setTimeout(() => {
-        window.location.href = "/api/login";
+        window.location.href = "/";
       }, 500);
       return;
     }
@@ -80,11 +80,11 @@ export default function Settings() {
       if (isUnauthorizedError(error)) {
         toast({
           title: "Unauthorized",
-          description: "You are logged out. Logging in again...",
+          description: "You are logged out. Please log in again.",
           variant: "destructive",
         });
         setTimeout(() => {
-          window.location.href = "/api/login";
+          window.location.href = "/";
         }, 500);
         return;
       }
@@ -100,8 +100,28 @@ export default function Settings() {
     updateProfileMutation.mutate(data);
   };
 
+  const logoutMutation = useMutation({
+    mutationFn: async () => {
+      await apiRequest("POST", "/api/logout", {});
+    },
+    onSuccess: () => {
+      toast({
+        title: "Logged Out",
+        description: "You have been successfully logged out.",
+      });
+      // Clear React Query cache and redirect
+      queryClient.clear();
+      window.location.href = "/";
+    },
+    onError: (error) => {
+      // Even if logout fails, clear the cache and redirect
+      queryClient.clear();
+      window.location.href = "/";
+    },
+  });
+
   const handleLogout = () => {
-    window.location.href = "/api/logout";
+    logoutMutation.mutate();
   };
 
   if (isLoading || !isAuthenticated) {
@@ -292,11 +312,21 @@ export default function Settings() {
                 <Button 
                   variant="outline" 
                   onClick={handleLogout} 
+                  disabled={logoutMutation.isPending}
                   className="border-red-200 text-red-600 hover:bg-red-50 hover:text-red-700 touch-target w-full sm:w-auto"
                   data-testid="button-logout"
                 >
-                  <LogOut className="h-4 w-4 mr-2" />
-                  Sign Out
+                  {logoutMutation.isPending ? (
+                    <>
+                      <div className="animate-spin w-4 h-4 border-2 border-red-600 border-t-transparent rounded-full mr-2" />
+                      Signing Out...
+                    </>
+                  ) : (
+                    <>
+                      <LogOut className="h-4 w-4 mr-2" />
+                      Sign Out
+                    </>
+                  )}
                 </Button>
               </div>
             </CardContent>
