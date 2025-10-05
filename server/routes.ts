@@ -7,6 +7,7 @@ import { z } from "zod";
 import Stripe from "stripe";
 import { generateInvoicePDF } from "./services/pdf";
 import { sendInvoiceEmail } from "./services/email";
+import { emailLogger } from "./services/emailLogger";
 
 let stripe: Stripe | null = null;
 
@@ -321,6 +322,76 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
 
     res.json({ received: true });
+  });
+
+  // Email analytics routes
+  app.get('/api/email-analytics/stats', isAuthenticated, async (req: any, res) => {
+    try {
+      const userId = req.user.id;
+      const days = parseInt(req.query.days as string) || 30;
+      
+      const stats = await emailLogger.getEmailStats(userId, days);
+      res.json(stats);
+    } catch (error) {
+      console.error("Error fetching email stats:", error);
+      res.status(500).json({ message: "Failed to fetch email statistics" });
+    }
+  });
+
+  app.get('/api/email-analytics/logs', isAuthenticated, async (req: any, res) => {
+    try {
+      const userId = req.user.id;
+      const limit = parseInt(req.query.limit as string) || 50;
+      
+      const logs = await emailLogger.getRecentEmailLogs(userId, limit);
+      res.json(logs);
+    } catch (error) {
+      console.error("Error fetching email logs:", error);
+      res.status(500).json({ message: "Failed to fetch email logs" });
+    }
+  });
+
+  // Webhook endpoints for email tracking
+  app.post('/api/webhook/resend/delivery', async (req, res) => {
+    try {
+      const { type, data } = req.body;
+      
+      if (type === 'email.delivered' && data?.id) {
+        await emailLogger.logEmailDelivery(data.id, 'delivered');
+      } else if (type === 'email.bounced' && data?.id) {
+        await emailLogger.logEmailDelivery(data.id, 'bounced');
+      } else if (type === 'email.complaint' && data?.id) {
+        await emailLogger.logEmailDelivery(data.id, 'complaint');
+      }
+      
+      res.json({ received: true });
+    } catch (error) {
+      console.error("Error processing email webhook:", error);
+      res.status(500).json({ message: "Failed to process webhook" });
+    }
+  });
+
+  app.get('/api/track/open/:invoiceId', async (req, res) => {   
+    try {
+      const { invoiceId } = req.params;
+      
+      // Log email open in invoice tracking
+      await storage.markEmailOpened(invoiceId);
+      
+      // Also log in email analytics if we can find the email log
+      // This is a simple 1x1 transparent pixel
+      res.setHeader('Content-Type', 'image/gif');
+      res.setHeader('Cache-Control', 'no-cache, no-store, must-revalidate');
+      res.setHeader('Pragma', 'no-cache');
+      res.setHeader('Expires', '0');
+      
+      // 1x1 transparent GIF
+      const transparentGif = Buffer.from('R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7', 'base64');
+      res.send(transparentGif);
+    } catch (error) {
+      console.error("Error tracking email open:", error);
+      res.status(200).send(); // Still return 200 to not break email display
+    }
   });
 
   const httpServer = createServer(app);

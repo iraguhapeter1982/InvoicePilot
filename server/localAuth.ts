@@ -203,7 +203,7 @@ export async function setupAuth(app: Express) {
 
       // Send password reset email
       const userName = user.firstName || user.email.split('@')[0];
-      const emailSent = await sendPasswordResetEmail(email, resetToken, userName);
+      const emailSent = await sendPasswordResetEmail(email, resetToken, userName, user.id);
       
       if (emailSent) {
         console.log(`Password reset email sent successfully to ${email}`);

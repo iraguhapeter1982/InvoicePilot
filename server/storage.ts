@@ -3,6 +3,7 @@ import {
   clients,
   invoices,
   invoiceItems,
+  emailLogs,
   type User,
   type UpsertUser,
   type Client,
@@ -12,6 +13,8 @@ import {
   type InsertInvoice,
   type InvoiceItem,
   type InsertInvoiceItem,
+  type EmailLog,
+  type InsertEmailLog,
   type DashboardMetrics,
 } from "@shared/schema";
 import { db } from "./db";
@@ -49,6 +52,21 @@ export interface IStorage {
   
   // Dashboard metrics
   getDashboardMetrics(userId: string): Promise<DashboardMetrics>;
+  
+  // Email logging operations
+  createEmailLog(emailLog: InsertEmailLog): Promise<string>;
+  updateEmailLog(id: string, data: Partial<InsertEmailLog>): Promise<void>;
+  updateEmailLogByProviderId(providerId: string, data: Partial<InsertEmailLog>): Promise<void>;
+  getEmailStats(userId: string, days: number): Promise<{
+    totalSent: number;
+    totalDelivered: number;
+    totalOpened: number;
+    totalFailed: number;
+    deliveryRate: number;
+    openRate: number;
+    byType: Record<string, number>;
+  }>;
+  getRecentEmailLogs(userId: string, limit: number): Promise<EmailLog[]>;
 }
 
 export class DatabaseStorage implements IStorage {
@@ -408,6 +426,99 @@ export class DatabaseStorage implements IStorage {
       overdueInvoices: invoiceCounts?.overdue || 0,
     };
   }
+
+  // Email logging operations
+  async createEmailLog(emailLog: InsertEmailLog): Promise<string> {
+    const [log] = await db.insert(emailLogs)
+      .values(emailLog)
+      .returning({ id: emailLogs.id });
+    return log.id;
+  }
+
+  async updateEmailLog(id: string, data: Partial<InsertEmailLog>): Promise<void> {
+    await db.update(emailLogs)
+      .set(data)
+      .where(eq(emailLogs.id, id));
+  }
+
+  async updateEmailLogByProviderId(providerId: string, data: Partial<InsertEmailLog>): Promise<void> {
+    await db.update(emailLogs)
+      .set(data)
+      .where(eq(emailLogs.providerId, providerId));
+  }
+
+  async getEmailStats(userId: string, days: number): Promise<{
+    totalSent: number;
+    totalDelivered: number;
+    totalOpened: number;
+    totalFailed: number;
+    deliveryRate: number;
+    openRate: number;
+    byType: Record<string, number>;
+  }> {
+    const startDate = new Date();
+    startDate.setDate(startDate.getDate() - days);
+
+    const stats = await db
+      .select({
+        status: emailLogs.status,
+        emailType: emailLogs.emailType,
+        count: sql<number>`count(*)`
+      })
+      .from(emailLogs)
+      .where(
+        and(
+          eq(emailLogs.userId, userId),
+          gte(emailLogs.createdAt, startDate)
+        )
+      )
+      .groupBy(emailLogs.status, emailLogs.emailType);
+
+    const totals = {
+      totalSent: 0,
+      totalDelivered: 0,
+      totalOpened: 0,
+      totalFailed: 0,
+      byType: {} as Record<string, number>
+    };
+
+    stats.forEach(stat => {
+      if (stat.status === 'sent') totals.totalSent += stat.count;
+      if (stat.status === 'delivered') totals.totalDelivered += stat.count;
+      if (stat.status === 'failed') totals.totalFailed += stat.count;
+      
+      totals.byType[stat.emailType] = (totals.byType[stat.emailType] || 0) + stat.count;
+    });
+
+    // Count emails that were opened
+    const [openedCount] = await db
+      .select({ count: sql<number>`count(*)` })
+      .from(emailLogs)
+      .where(
+        and(
+          eq(emailLogs.userId, userId),
+          gte(emailLogs.createdAt, startDate),
+          sql`${emailLogs.openedAt} IS NOT NULL`
+        )
+      );
+
+    totals.totalOpened = openedCount?.count || 0;
+
+    return {
+      ...totals,
+      deliveryRate: totals.totalSent > 0 ? (totals.totalDelivered / totals.totalSent) * 100 : 0,
+      openRate: totals.totalDelivered > 0 ? (totals.totalOpened / totals.totalDelivered) * 100 : 0
+    };
+  }
+
+  async getRecentEmailLogs(userId: string, limit: number): Promise<EmailLog[]> {
+    return await db.select()
+      .from(emailLogs)
+      .where(eq(emailLogs.userId, userId))
+      .orderBy(desc(emailLogs.createdAt))
+      .limit(limit);
+  }
 }
 
 export const storage = new DatabaseStorage();
+export const createStorage = () => new DatabaseStorage();

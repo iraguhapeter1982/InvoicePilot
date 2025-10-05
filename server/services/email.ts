@@ -1,5 +1,6 @@
 import { Resend } from 'resend';
 import { type InvoiceWithDetails, type User } from "@shared/schema";
+import { emailLogger, type EmailLogData, type EmailSendResult } from './emailLogger';
 
 let resend: Resend | null = null;
 
@@ -19,7 +20,21 @@ export async function sendInvoiceEmail(
     return false;
   }
 
+  const emailLogData: EmailLogData = {
+    userId: user.id,
+    invoiceId: invoice.id,
+    emailType: 'invoice',
+    recipientEmail: invoice.client.email,
+    senderEmail: process.env.FROM_EMAIL || 'noreply@invoicepilot.com',
+    metadata: {
+      invoiceNumber: invoice.invoiceNumber,
+      clientName: invoice.client.name,
+      amount: invoice.total
+    }
+  };
+
   try {
+    const result = await emailLogger.logEmailSend(emailLogData, async (): Promise<EmailSendResult> => {
     const domains = process.env.REPLIT_DOMAINS?.split(',') || [];
     const domain = domains[0] || 'localhost:3000';
     const trackingPixelUrl = `https://${domain}/api/track/open/${invoice.id}`;
@@ -122,13 +137,23 @@ export async function sendInvoiceEmail(
       ],
     });
 
-    if (error) {
-      console.error('Resend email error:', error);
-      return false;
-    }
+      if (error) {
+        console.error('Resend email error:', error);
+        return {
+          success: false,
+          error: error.message || 'Failed to send email'
+        };
+      }
 
-    console.log('Invoice email sent successfully:', data);
-    return true;
+      console.log('Invoice email sent successfully:', data);
+      return {
+        success: true,
+        providerId: data?.id,
+        providerResponse: data
+      };
+    });
+
+    return result.success;
   } catch (error) {
     console.error('Email service error:', error);
     return false;
@@ -139,20 +164,66 @@ export async function sendInvoiceEmail(
 export async function sendPasswordResetEmail(
   email: string,
   resetToken: string,
-  userName: string
+  userName: string,
+  userId?: string
 ): Promise<boolean> {
   if (!resend) {
     console.warn('Email service not configured - RESEND_API_KEY not set. Password reset email will not be sent.');
     return false;
   }
 
-  try {
-    const domains = process.env.REPLIT_DOMAINS?.split(',') || [];
-    const domain = domains[0] || 'localhost:3000';
-    const resetUrl = `https://${domain}/reset-password?token=${resetToken}`;
-    const fromEmail = process.env.FROM_EMAIL || 'noreply@invoicepilot.com';
+  // Only log if we have a userId (user exists)
+  if (userId) {
+    const emailLogData: EmailLogData = {
+      userId: userId,
+      emailType: 'password_reset',
+      recipientEmail: email,
+      senderEmail: process.env.FROM_EMAIL || 'noreply@invoicepilot.com',
+      metadata: {
+        resetToken: resetToken.substring(0, 8) + '...', // Only log partial token for security
+        userName: userName
+      }
+    };
 
-    const { data, error } = await resend.emails.send({
+    try {
+      const result = await emailLogger.logEmailSend(emailLogData, async (): Promise<EmailSendResult> => {
+        return await sendPasswordResetEmailInternal(email, resetToken, userName);
+      });
+      return result.success;
+    } catch (error) {
+      console.error('Password reset email service error:', error);
+      return false;
+    }
+  } else {
+    // If no userId, send without logging (for security - don't log attempts for non-existent users)
+    try {
+      const result = await sendPasswordResetEmailInternal(email, resetToken, userName);
+      return result.success;
+    } catch (error) {
+      console.error('Password reset email service error:', error);
+      return false;
+    }
+  }
+}
+
+async function sendPasswordResetEmailInternal(
+  email: string,
+  resetToken: string,
+  userName: string
+): Promise<EmailSendResult> {
+  if (!resend) {
+    return {
+      success: false,
+      error: 'Email service not configured'
+    };
+  }
+
+  const domains = process.env.REPLIT_DOMAINS?.split(',') || [];
+  const domain = domains[0] || 'localhost:3000';
+  const resetUrl = `https://${domain}/reset-password?token=${resetToken}`;
+  const fromEmail = process.env.FROM_EMAIL || 'noreply@invoicepilot.com';
+
+  const { data, error } = await resend.emails.send({
       from: `InvoicePilot <${fromEmail}>`,
       to: [email],
       subject: 'Reset Your InvoicePilot Password',
@@ -216,13 +287,16 @@ export async function sendPasswordResetEmail(
 
     if (error) {
       console.error('Resend password reset email error:', error);
-      return false;
+      return {
+        success: false,
+        error: error.message || 'Failed to send password reset email'
+      };
     }
 
     console.log('Password reset email sent successfully:', data);
-    return true;
-  } catch (error) {
-    console.error('Password reset email service error:', error);
-    return false;
-  }
+    return {
+      success: true,
+      providerId: data?.id,
+      providerResponse: data
+    };
 }

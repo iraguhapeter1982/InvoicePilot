@@ -96,6 +96,29 @@ export const invoiceItems = pgTable("invoice_items", {
   createdAt: timestamp("created_at").defaultNow(),
 });
 
+// Email logs table for tracking all transactional emails
+export const emailLogs = pgTable("email_logs", {
+  id: varchar("id").primaryKey().default(sql`gen_random_uuid()`),
+  userId: varchar("user_id").references(() => users.id),
+  invoiceId: varchar("invoice_id").references(() => invoices.id),
+  emailType: varchar("email_type").notNull(), // 'invoice', 'password_reset', 'welcome', etc.
+  recipientEmail: varchar("recipient_email").notNull(),
+  recipientName: varchar("recipient_name"),
+  senderEmail: varchar("sender_email"),
+  senderName: varchar("sender_name"),
+  subject: text("subject"),
+  status: varchar("status").notNull().default("sent"), // 'sent', 'delivered', 'opened', 'failed', 'bounced'
+  providerId: varchar("provider_id"), // Resend email ID for tracking
+  providerResponse: text("provider_response"), // JSON response from email provider
+  errorMessage: text("error_message"),
+  metadata: text("metadata"), // JSON field for additional data
+  sentAt: timestamp("sent_at").defaultNow(),
+  deliveredAt: timestamp("delivered_at"),
+  openedAt: timestamp("opened_at"),
+  createdAt: timestamp("created_at").defaultNow(),
+  updatedAt: timestamp("updated_at").defaultNow(),
+});
+
 // Relations
 export const usersRelations = relations(users, ({ many }) => ({
   clients: many(clients),
@@ -129,6 +152,17 @@ export const invoiceItemsRelations = relations(invoiceItems, ({ one }) => ({
   }),
 }));
 
+export const emailLogsRelations = relations(emailLogs, ({ one }) => ({
+  user: one(users, {
+    fields: [emailLogs.userId],
+    references: [users.id],
+  }),
+  invoice: one(invoices, {
+    fields: [emailLogs.invoiceId],
+    references: [invoices.id],
+  }),
+}));
+
 // Insert schemas
 export const insertUserSchema = createInsertSchema(users).omit({
   id: true,
@@ -157,11 +191,19 @@ export const insertInvoiceItemSchema = createInsertSchema(invoiceItems).omit({
   createdAt: true,
 });
 
+export const insertEmailLogSchema = createInsertSchema(emailLogs).omit({
+  id: true,
+  createdAt: true,
+  updatedAt: true,
+});
+
 // Types
 export type UpsertUser = z.infer<typeof insertUserSchema>;
 export type User = typeof users.$inferSelect;
 export type InsertClient = z.infer<typeof insertClientSchema>;
 export type Client = typeof clients.$inferSelect;
+export type EmailLog = typeof emailLogs.$inferSelect;
+export type InsertEmailLog = z.infer<typeof insertEmailLogSchema>;
 export type InsertInvoice = z.infer<typeof insertInvoiceSchema>;
 export type Invoice = typeof invoices.$inferSelect;
 export type InsertInvoiceItem = z.infer<typeof insertInvoiceItemSchema>;
