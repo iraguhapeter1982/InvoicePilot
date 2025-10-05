@@ -9,7 +9,6 @@ import Dashboard from "@/pages/dashboard";
 import Invoices from "@/pages/invoices";
 import Clients from "@/pages/clients";
 import Settings from "@/pages/settings";
-import NotFound from "@/pages/not-found";
 
 function Router() {
   const { isAuthenticated, isLoading } = useAuth();
@@ -24,17 +23,16 @@ function Router() {
 
   return (
     <Switch>
-      {!isAuthenticated ? (
-        <Route path="/" component={Landing} />
-      ) : (
+      <Route path="/" component={!isAuthenticated ? Landing : Dashboard} />
+      {isAuthenticated && (
         <>
-          <Route path="/" component={Dashboard} />
           <Route path="/invoices" component={Invoices} />
           <Route path="/clients" component={Clients} />
           <Route path="/settings" component={Settings} />
         </>
       )}
-      <Route component={NotFound} />
+      {/* Catch all unmatched routes */}
+      <Route component={!isAuthenticated ? Landing : Dashboard} />
     </Switch>
   );
 }
