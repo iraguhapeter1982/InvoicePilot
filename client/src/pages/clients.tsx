@@ -247,11 +247,11 @@ export default function Clients() {
           /* Clients Grid */
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
             {clients?.map((client: Client) => (
-              <Card key={client.id} className="modern-card hover:shadow-xl transition-all duration-300 group">
+              <Card key={client.id} className="modern-card hover:shadow-xl transition-all duration-300 group overflow-hidden">
                 <CardHeader className="pb-4">
-                  <div className="flex justify-between items-start">
-                    <div className="flex items-center space-x-3 flex-1">
-                      <div className="w-12 h-12 bg-primary/10 rounded-xl flex items-center justify-center group-hover:bg-primary/20 transition-colors">
+                  <div className="flex flex-col sm:flex-row sm:justify-between sm:items-start gap-3">
+                    <div className="flex items-center space-x-3 flex-1 min-w-0">
+                      <div className="w-12 h-12 bg-primary/10 rounded-xl flex items-center justify-center group-hover:bg-primary/20 transition-colors flex-shrink-0">
                         <User className="h-6 w-6 text-primary" />
                       </div>
                       <div className="min-w-0 flex-1">
@@ -259,19 +259,19 @@ export default function Clients() {
                           {client.name}
                         </CardTitle>
                         <div className="flex items-center gap-1 text-sm text-muted-foreground mt-1">
-                          <Mail className="h-3 w-3" />
+                          <Mail className="h-3 w-3 flex-shrink-0" />
                           <span className="truncate" data-testid={`text-client-email-${client.id}`}>
                             {client.email}
                           </span>
                         </div>
                       </div>
                     </div>
-                    <div className="flex space-x-1">
+                    <div className="flex space-x-1 flex-shrink-0 sm:ml-2">
                       <Button
                         variant="ghost"
                         size="sm"
                         onClick={() => handleEdit(client)}
-                        className="touch-target"
+                        className="touch-target h-8 w-8 p-0"
                         data-testid={`button-edit-client-${client.id}`}
                       >
                         <Edit className="h-4 w-4" />
@@ -281,7 +281,7 @@ export default function Clients() {
                         size="sm"
                         onClick={() => deleteClientMutation.mutate(client.id)}
                         disabled={deleteClientMutation.isPending}
-                        className="touch-target text-red-600 hover:text-red-700 hover:bg-red-50"
+                        className="touch-target h-8 w-8 p-0 text-red-600 hover:text-red-700 hover:bg-red-50"
                         data-testid={`button-delete-client-${client.id}`}
                       >
                         <Trash2 className="h-4 w-4" />
