@@ -1,7 +1,7 @@
 import type { Express } from "express";
 import { createServer, type Server } from "http";
 import { storage } from "./storage";
-import { setupAuth, isAuthenticated } from "./replitAuth";
+import { setupAuth, isAuthenticated } from "./localAuth";
 import { insertClientSchema, insertInvoiceSchema, insertInvoiceItemSchema } from "@shared/schema";
 import { z } from "zod";
 import Stripe from "stripe";
@@ -24,9 +24,8 @@ export async function registerRoutes(app: Express): Promise<Server> {
   // Auth routes
   app.get('/api/auth/user', isAuthenticated, async (req: any, res) => {
     try {
-      const userId = req.user.claims.sub;
-      const user = await storage.getUser(userId);
-      res.json(user);
+      // req.user is now the user object (without password) from our local auth
+      res.json(req.user);
     } catch (error) {
       console.error("Error fetching user:", error);
       res.status(500).json({ message: "Failed to fetch user" });
@@ -36,7 +35,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
   // User profile routes
   app.put('/api/profile', isAuthenticated, async (req: any, res) => {
     try {
-      const userId = req.user.claims.sub;
+      const userId = req.user.id;
       const updateData = req.body;
       const user = await storage.updateUserProfile(userId, updateData);
       res.json(user);
@@ -49,7 +48,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
   // Client routes
   app.get('/api/clients', isAuthenticated, async (req: any, res) => {
     try {
-      const userId = req.user.claims.sub;
+      const userId = req.user.id;
       const clients = await storage.getClients(userId);
       res.json(clients);
     } catch (error) {
@@ -60,7 +59,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
 
   app.post('/api/clients', isAuthenticated, async (req: any, res) => {
     try {
-      const userId = req.user.claims.sub;
+      const userId = req.user.id;
       const clientData = insertClientSchema.parse({ ...req.body, userId });
       const client = await storage.createClient(clientData);
       res.json(client);
@@ -72,7 +71,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
 
   app.put('/api/clients/:id', isAuthenticated, async (req: any, res) => {
     try {
-      const userId = req.user.claims.sub;
+      const userId = req.user.id;
       const { id } = req.params;
       const updateData = req.body;
       const client = await storage.updateClient(id, userId, updateData);
@@ -85,7 +84,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
 
   app.delete('/api/clients/:id', isAuthenticated, async (req: any, res) => {
     try {
-      const userId = req.user.claims.sub;
+      const userId = req.user.id;
       const { id } = req.params;
       await storage.deleteClient(id, userId);
       res.json({ success: true });
@@ -98,7 +97,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
   // Invoice routes
   app.get('/api/invoices', isAuthenticated, async (req: any, res) => {
     try {
-      const userId = req.user.claims.sub;
+      const userId = req.user.id;
       const invoices = await storage.getInvoices(userId);
       res.json(invoices);
     } catch (error) {
@@ -109,7 +108,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
 
   app.get('/api/invoices/:id', isAuthenticated, async (req: any, res) => {
     try {
-      const userId = req.user.claims.sub;
+      const userId = req.user.id;
       const { id } = req.params;
       const invoice = await storage.getInvoice(id, userId);
       if (!invoice) {
@@ -124,7 +123,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
 
   app.post('/api/invoices', isAuthenticated, async (req: any, res) => {
     try {
-      const userId = req.user.claims.sub;
+      const userId = req.user.id;
       const { items, ...invoiceData } = req.body;
       
       const invoiceNumber = await storage.getNextInvoiceNumber(userId);
@@ -148,7 +147,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
 
   app.put('/api/invoices/:id', isAuthenticated, async (req: any, res) => {
     try {
-      const userId = req.user.claims.sub;
+      const userId = req.user.id;
       const { id } = req.params;
       const updateData = req.body;
       const invoice = await storage.updateInvoice(id, userId, updateData);
@@ -161,7 +160,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
 
   app.delete('/api/invoices/:id', isAuthenticated, async (req: any, res) => {
     try {
-      const userId = req.user.claims.sub;
+      const userId = req.user.id;
       const { id } = req.params;
       await storage.deleteInvoice(id, userId);
       res.json({ success: true });
@@ -174,7 +173,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
   // Invoice actions
   app.post('/api/invoices/:id/send', isAuthenticated, async (req: any, res) => {
     try {
-      const userId = req.user.claims.sub;
+      const userId = req.user.id;
       const { id } = req.params;
       
       const invoice = await storage.getInvoice(id, userId);
@@ -205,7 +204,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
 
   app.get('/api/invoices/:id/pdf', isAuthenticated, async (req: any, res) => {
     try {
-      const userId = req.user.claims.sub;
+      const userId = req.user.id;
       const { id } = req.params;
       
       const invoice = await storage.getInvoice(id, userId);
@@ -248,7 +247,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
   // Dashboard metrics
   app.get('/api/dashboard/metrics', isAuthenticated, async (req: any, res) => {
     try {
-      const userId = req.user.claims.sub;
+      const userId = req.user.id;
       const metrics = await storage.getDashboardMetrics(userId);
       res.json(metrics);
     } catch (error) {
@@ -265,7 +264,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
       }
 
       const { invoiceId } = req.body;
-      const userId = req.user.claims.sub;
+      const userId = req.user.id;
       
       const invoice = await storage.getInvoice(invoiceId, userId);
       if (!invoice) {
